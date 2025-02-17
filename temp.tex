@@ -1012,42 +1012,41 @@ array<i64, 2> EK() {
 }
 \end{lstlisting}
 
-\subsection{tarjan-SCC}
+\subsection{tarjan(强联通分量)}
 
 \begin{lstlisting}
-const int N = 2e5+10;
-list<int> nxt[N];
-int st[N], ins[N], c[N];
-int dfn[N], low[N];
-vector<int> scc[N];
-int n, m, tot, num, top, cnt;
-void tarjan(int x) {
-	dfn[x] = low[x] = ++num;
-	st[++top] = x, ins[x] = 1;
-	for (auto i : nxt[x]) {
-		if (!dfn[i]) {
-			tarjan(i); chmin(low[x], low[i]);
+int dfn[N], low[N], bel[N], st[N], top, cnt, tms;
+vector<int> adj[N], scc[N];
+void tarjan(int u) {
+	dfn[u] = low[u] = ++tms;
+	st[++top] = u;
+	for (auto v : adj[u]) {
+		if (!dfn[v]) {
+			tarjan(v);
+			chmin(low[u], low[v]);
 		}
-		else if (ins[i]) chmin(low[x], dfn[i]);
+		else if (!bel[v]) {
+			chmin(low[u], dfn[v]);
+		}
 	}
-	if (dfn[x] == low[x]) {
-		cnt ++; int y;
+	if (low[u] == dfn[u]) {
+		int z; cnt ++;
 		do {
-			y = st[top--], ins[y] = 0;
-			c[y] = cnt, scc[cnt].push_back(y);
+			z = st[top--]; bel[z] = cnt;
+			scc[cnt].push_back(z);
 		}
-		while (x != y);
+		while (z != u);
 	}
 }
 \end{lstlisting}
 
-\subsection{tarjan-e-DCC}
+\subsection{tarjan(边双)}
 
 \begin{lstlisting}
 const int N = 5e5L+10;
 // to, ind
 vector<array<int, 2>> adj[N];
-vector<int> scc[N];
+vector<int> bcc[N];
 int dfn[N], low[N], st[N], bel[N], top, n, m, cnt, tt;
 void tarjan(int u, int in) {
 	low[u] = dfn[u] = ++tt;
@@ -1058,8 +1057,8 @@ void tarjan(int u, int in) {
 			tarjan(v, id);
 			chmin(low[u], low[v]);
 		}
-		else if (!bel[v]) {
-			chmin(low[u], low[v]);
+		else {
+			chmin(low[u], dfn[v]);
 		}
 	}
 	if (dfn[u] == low[u]) {
@@ -1067,10 +1066,43 @@ void tarjan(int u, int in) {
 		int z;
 		do {
 			z = st[top--];
-			scc[cnt].push_back(z);
+			bcc[cnt].push_back(z);
 			bel[z] = cnt;
 		}
 		while (z != u);
+	}
+}
+\end{lstlisting}
+
+\subsection{tarjan(点双)}
+
+\begin{lstlisting}
+int dfn[N], low[N], st[N], bel[N], cut[N], top, tms, cnt;
+vector<int> adj[N], bcc[N];
+void tarjan(int u, int fa) {
+	dfn[u] = low[u] = ++tms;
+	st[++top] = u;
+	int ch = 0;
+	for (auto v : adj[u]) {
+		if (!dfn[v]) {
+			tarjan(v, u);
+			chmin(low[u], low[v]);
+			if (low[v] >= dfn[u]) {
+				if (++ch > 1 && fa) cut[u] = 1;
+				int z; cnt ++;
+				do {
+					z = st[top--];
+					bel[z] = cnt;
+					bcc[cnt].push_back(z);
+				}
+				while (z != v);
+				bcc[cnt].push_back(u);
+			}
+		}
+		else chmin(low[u], dfn[v]);
+	}
+	if (!fa && !ch) {
+		bcc[++cnt] = {u}; // 特判独立点
 	}
 }
 \end{lstlisting}
