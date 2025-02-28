@@ -1115,10 +1115,26 @@ void tarjan(int u, int fa) {
 cout.setf(ios::fixed); cout.precision(15);
 \end{lstlisting}
 
+\subsection{mmap映射stdin}
+
+\begin{lstlisting}
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+// int fd = open("*.in", O_RDONLY);
+int fd = 0; // stdin
+struct stat state;
+fstat(fd, &state);
+int len = state.st_size;
+char* addr = (char *) mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
+\end{lstlisting}
+
 \subsection{read()}
 
 \begin{lstlisting}
-int read() {
+int read() { // 换成 getchar_unlocked 可加快速度
 	int x = 0, w = 1, ch = getchar();
 	for (; !isdigit(ch); ch = getchar()) if (ch == '-') w = -1;
 	for (; isdigit(ch); ch = getchar()) x = x * 10 + ch - '0';
