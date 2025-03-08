@@ -67,7 +67,7 @@
 \lstset{
 	language=C++,                           % 设置语言
 	basicstyle=\small\ttfamily,             % 基本代码风格
-	columns=fixed,                          % 
+	columns=fixed,                          %
 	numbers=left,                           % 行号的位置在左边
 	numberstyle=\small\color{mygray},       % 行号的样式
 	stepnumber=1,                           % 行号的步进值
@@ -120,7 +120,7 @@
 	\hrule\ \\[8pt]
 	\fontsize{48pt}{\baselineskip}\selectfont  \textsc{\KWtitle}\\[8pt]
 	~\\[20pt]
-%		\includegraphics[scale=1]{./cover.jpg}    
+%		\includegraphics[scale=1]{./cover.jpg}
 	~\\[50pt]
 	\huge \KWauthor\\[8pt]
 	\Large Last build at \today
@@ -430,23 +430,19 @@ cout << c[__builtin_popcount(i)][i] << " \n"[i==n-1];
 \subsection{FWT}
 
 \begin{lstlisting}
-constexpr int inv2 = qpow(2, mod-2);
-// constexpr array<int, 4> ...
-CONV_OR  = {     1,      0,      1,        1};
-INV_OR   = {     1,      0,  mod-1,        1};
-CONV_AND = {     1,      1,      0,        1};
-INV_AND  = {     1,  mod-1,      0,        1};
-CONV_XOR = {     1,      1,      1,    mod-1};
-INV_XOR  = {  inv2,   inv2,   inv2, mod-inv2};
-void FWT(int* a, array<int, 4> ty) {
+constexpr array<Mint, 4> OR1  = {    1,     0,     1,      1};
+constexpr array<Mint, 4> OR2  = {    1,     0,    -1,      1};
+constexpr array<Mint, 4> AND1 = {    1,     1,     0,      1};
+constexpr array<Mint, 4> AND2 = {    1,    -1,     0,      1};
+constexpr array<Mint, 4> XOR1 = {    1,     1,     1,     -1};
+constexpr array<Mint, 4> XOR2 = {1_M/2, 1_M/2, 1_M/2, -1_M/2};
+constexpr void FWT(int n, Mint* a, array<Mint, 4> t) {
 	for (int x = 2; x <= n; x <<= 1) {
 		int k = x >> 1;
 		for (int i = 0; i < n; i += x) {
 			for (int j = 0; j < k; j++) {
-				int tmp0 = (1ll * a[i + j] * ty[0] % mod
-				+ 1ll * a[i + j + k] * ty[1] % mod) % mod;
-				int tmp1 = (1ll * a[i + j] * ty[2] % mod
-				+ 1ll * a[i + j + k] * ty[3] % mod) % mod;
+				auto tmp0 = a[i+j] * t[0] + a[i+j+k] * t[1];
+				auto tmp1 = a[i+j] * t[2] + a[i+j+k] * t[3];
 				a[i + j] = tmp0, a[i + j + k] = tmp1;
 			}
 		}
@@ -1115,6 +1111,17 @@ void tarjan(int u, int fa) {
 cout.setf(ios::fixed); cout.precision(15);
 \end{lstlisting}
 
+\subsection{上取整下取整}
+i64 ceilDiv(i64 n, i64 m) {
+	return n >= 0 ? (n + m - 1) / m : n / m;
+}
+i64 floorDiv(i64 n, i64 m) {
+	return n >= 0 ? n / m : (n - m + 1) / m;
+}
+\begin{lstlisting}
+cout.setf(ios::fixed); cout.precision(15);
+\end{lstlisting}
+
 \subsection{mmap映射stdin}
 
 \begin{lstlisting}
@@ -1318,7 +1325,7 @@ int days[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
 struct Date {
 	int year, month, day;
 };
-//判闰年	
+//判闰年
 inline int leap(int year) {
 	return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 }
