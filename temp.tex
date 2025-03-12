@@ -266,37 +266,35 @@ int millerRabin(i64 n) {
 constexpr int mod = 998'244'353;
 constexpr int qpow(int x, int y) {
 	int ans = 1;
-	while (y) {
-		if (y&1) ans = 1ll * ans * x % mod;
-		x = 1ll * x * x % mod; y >>= 1;
+	for (; y; y >>= 1, x = 1ll * x * x % mod) {
+		if (y & 1) ans = 1ll * ans * x % mod;
 	}
 	return ans;
 }
 struct Mint {
 	int val;
-	static constexpr int Normal(int x) { return x<0&&(x+=mod)||x>=mod&&(x-=mod), x; }
 	constexpr Mint() : val(0) {}
 	constexpr Mint(i64 x): val(Normal(x % mod)) {}
-	constexpr i64 Inv() const { return qpow(val, mod-2); }
-	constexpr i64 Pow(i64 p) const { return qpow(val, p); }
+	static constexpr int Normal(int x) { return x<0&&(x+=mod)||x>=mod&&(x-=mod), x; }
 };
-#define CE constexpr
-CE Mint operator- (Mint a) { return mod-a.val; }
-CE bool operator== (Mint a, Mint b) { return a.val == b.val; }
-CE Mint operator+ (Mint a, Mint b) { return a.val + b.val; }
-CE Mint operator- (Mint a, Mint b) { return a.val - b.val; }
-CE Mint operator* (Mint a, Mint b) { return 1ll * a.val * b.val; }
-CE Mint operator/ (Mint a, Mint b) { return 1ll * a.val * b.Inv(); }
-CE Mint& operator+= (Mint &a, Mint b) { return a = a + b; }
-CE Mint& operator-= (Mint &a, Mint b) { return a = a - b; }
-CE Mint& operator*= (Mint &a, Mint b) { return a = a * b; }
-CE Mint& operator/= (Mint &a, Mint b) { return a = a / b; }
-CE Mint& operator++ (Mint &a) { return a += 1; }
-CE Mint& operator-- (Mint &a) { return a -= 1; }
-CE Mint operator++ (Mint &a, int) { auto b = a; return a += 1, b; }
-CE Mint operator-- (Mint &a, int) { auto b = a; return a -= 1, b; }
+constexpr Mint Pow(Mint a, i64 p) { return qpow(a.val, p); }
+constexpr Mint Inv(Mint a) { return Pow(a, mod-2); }
+constexpr Mint operator- (Mint a) { return mod-a.val; }
+constexpr Mint operator+ (Mint a, Mint b) { return a.val + b.val; }
+constexpr Mint operator- (Mint a, Mint b) { return a.val - b.val; }
+constexpr Mint operator* (Mint a, Mint b) { return 1ll * a.val * b.val; }
+constexpr Mint operator/ (Mint a, Mint b) { return 1ll * a.val * Inv(b); }
+constexpr Mint& operator+= (Mint &a, Mint b) { return a = a + b; }
+constexpr Mint& operator-= (Mint &a, Mint b) { return a = a - b; }
+constexpr Mint& operator*= (Mint &a, Mint b) { return a = a * b; }
+constexpr Mint& operator/= (Mint &a, Mint b) { return a = a / b; }
+constexpr Mint& operator++ (Mint &a) { return a += 1; }
+constexpr Mint& operator-- (Mint &a) { return a -= 1; }
+constexpr Mint operator++ (Mint &a, int) { auto b = a; return a += 1, b; }
+constexpr Mint operator-- (Mint &a, int) { auto b = a; return a -= 1, b; }
 template <typename S> S& operator<< (S &s, Mint a) { return s << a.val; }
-CE Mint operator "" _M (unsigned long long x) { return x; }
+constexpr bool operator== (Mint a, Mint b) { return a.val == b.val; }
+constexpr Mint operator "" _M (unsigned long long x) { return x; }
 \end{lstlisting}
 
 \section{数学}
@@ -335,8 +333,7 @@ static inline i64 C(i64 x, i64 y) {
 // c[p]中 i个元素>=k的方案数.
 inline i64 calc(i64 p, i64 m, i64 k, i64 i) {
 	if (i * k > m || i > p) return 0;
-	return (C(p, i) * C(m-i*k+p-1, p-1) % mod
-	+ mod - calc(p, m, k, i+1)) % mod;
+	return (C(p, i) * C(m-i*k+p-1, p-1) % mod + mod - calc(p, m, k, i+1)) % mod;
 }
 \end{lstlisting}
 
@@ -398,7 +395,7 @@ void dft(cp* a) {
 void idft(cp* a) {
 	dft(a); reverse(a+1, a+lim);
 	for (int i = 0; i < lim; i ++)
-	a[i] /= lim;
+		a[i] /= lim;
 }
 \end{lstlisting}
 
@@ -421,10 +418,10 @@ REP(i, 0, n-1) cin >> a[__builtin_popcount(i)][i];
 REP(i, 0, n-1) cin >> b[__builtin_popcount(i)][i];
 REP(i, 0, d) fmt(a[i]), fmt(b[i]);
 REP(i, 0, n-1) REP(j, 0, d) REP(k, 0, d-j)
-c[j+k][i] += 1ll * a[j][i] * b[k][i];
+	c[j+k][i] += 1ll * a[j][i] * b[k][i];
 REP(i, 0, d) ifmt(c[i]);
 REP(i, 0, n-1)
-cout << c[__builtin_popcount(i)][i] << " \n"[i==n-1];
+	cout << c[__builtin_popcount(i)][i] << " \n"[i==n-1];
 \end{lstlisting}
 
 \subsection{FWT}
@@ -765,7 +762,7 @@ template <size_t N, size_t M, size_t K, typename T>
 constexpr Mat<N, K, T> operator* (const Mat<N, M, T> &a, const Mat<M, K, T> &b) {
 	Mat<N, K, T> res {};
 	REP(i, 0, N-1) REP(j, 0, M-1) REP(k, 0, K-1)
-	res[i][k] += a[i][j] * b[j][k];
+		res[i][k] += a[i][j] * b[j][k];
 	return res;
 }
 \end{lstlisting}
