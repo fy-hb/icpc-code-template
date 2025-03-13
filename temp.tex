@@ -275,7 +275,7 @@ struct Mint {
 	int val;
 	constexpr Mint() : val(0) {}
 	constexpr Mint(i64 x): val(Normal(x % mod)) {}
-	static constexpr int Normal(int x) { return x<0&&(x+=mod)||x>=mod&&(x-=mod), x; }
+	static constexpr int Normal(int x) { return x<0&&(x+=mod), x; }
 };
 constexpr Mint Pow(Mint a, i64 p) { return qpow(a.val, p); }
 constexpr Mint Inv(Mint a) { return Pow(a, mod-2); }
@@ -807,8 +807,7 @@ void put(int x) {
 	if (x) rev[x] ^= 1, swap(son[x][0], son[x][1]);
 }
 void down(int x) {
-	if (rev[x])
-	put(son[x][0]), put(son[x][1]), rev[x] = 0;
+	if (rev[x]) put(son[x][0]), put(son[x][1]), rev[x] = 0;
 }
 void pushdown(int x) {
 	if (!is_root(x)) pushdown(fa[x]);
@@ -816,13 +815,12 @@ void pushdown(int x) {
 }
 void splay(int x) {
 	for (pushdown(x); !is_root(x); rotate(x))
-	if (!is_root(fa[x]))
-	rotate(get(x)^get(fa[x]) ? x : fa[x]);
+		if (!is_root(fa[x]))
+			rotate(get(x)^get(fa[x]) ? x : fa[x]);
 	update(x);
 }
 void access(int x) {
-	for (int t = 0; x; son[x][1] = t, t = x, x = fa[x])
-	splay(x);
+	for (int t = 0; x; son[x][1] = t, t = x, x = fa[x]) splay(x);
 }
 void mkroot(int x) {
 	access(x), splay(x), put(x);
