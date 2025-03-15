@@ -875,65 +875,51 @@ REP(k, 1, n) REP(x, 1, n) REP(y, 1, n)
 \subsection{dinic}
 
 \begin{lstlisting}
-const int N = 1e5+10;
-const i64 INF = 2e15L;
-struct Node {
-	int to, at;
-	i64 gap, flow;
-};
-vector<Node> e[N];
-int cur[N], dep[N];
+const i64 INF = 2e16L;
+struct Node { int to; i64 cap, flow; };
+vector<Node> e;
+vector<vector<int>> adj;
+vector<int> cur, dis;
 int n, s, t;
-void Init(int nn, int ss = 0, int tt = 0) {
+void init(int nn, int ss = 0, int tt = 0) {
 	n = nn, s = ss, t = tt;
-	for (int i = 0; i <= n; i ++)
-	e[i].clear();
+	e.clear(); adj.assign(n+1, {});
 }
-void Add(int u, int v, i64 w, i64 rev = 0) {
-	e[u].push_back({v, 0, w, 0});
-	e[v].push_back({u, 0, rev, 0});
-	e[u].back().at = e[v].size() - 1;
-	e[v].back().at = e[u].size() - 1;
+void add(int u, int v, i64 w) {
+	adj[u].push_back(e.size());
+	e.push_back({v, w, 0});
+	adj[v].push_back(e.size());
+	e.push_back({u, 0, 0});
 }
-int Bfs() {
-	fill(dep, dep+n+1, 0);
-	dep[s] = 1;
-	list<int> q = {s};
-	while (!q.empty()) {
-		auto u = q.front();
-		q.pop_front();
-		for (auto [v, _, g, f] : e[u]) {
-			if (!dep[v] && f < g) {
-				dep[v] = dep[u] + 1;
-				q.push_back(v);
-			}
+int bfs() {
+	dis.assign(n+1, {});
+	cur.assign(n+1, {});
+	queue<int> Q;
+	for (Q.push(s), dis[s] = 1; Q.size(); ) {
+		int u = Q.front(); Q.pop();
+		for (auto i : adj[u]) {
+			if (!dis[e[i].to] && e[i].cap-e[i].flow)
+				dis[e[i].to] = dis[u] + 1, Q.push(e[i].to);
 		}
 	}
-	return dep[t];
+	return dis[t];
 }
-i64 Dfs(int u, i64 fl) {
-	if (u == t || fl == 0) return fl;
-	i64 res = 0;
-	for (int &i = cur[u]; i < e[u].size(); i ++) {
-		auto [v, j, g, f] = e[u][i];
-		if (dep[v] == dep[u] + 1) {
-			i64 d = Dfs(v, min(fl - res, g - f));
-			if (d) {
-				res += d;
-				e[u][i].flow += d;
-				e[v][j].flow -= d;
-				if (res == fl) return res;
-			}
+i64 dfs(int u, i64 flow) {
+	if (u == t || !flow) return flow;
+	i64 tot = 0, res;
+	for (int &id = cur[u]; id < ssize(adj[u]); id ++) {
+		int i = adj[u][id];
+		if (dis[e[i].to] == dis[u] + 1 && (res = dfs(e[i].to, min(flow, e[i].cap - e[i].flow)))) {
+			e[i].flow += res, e[i^1].flow -= res;
+			tot += res, flow -= res;
+			if (!flow) break;
 		}
 	}
-	return res;
+	return tot;
 }
-i64 Work() {
+i64 Dinic() {
 	i64 ans = 0;
-	while (Bfs()) {
-		fill(cur, cur+n+1, 0);
-		ans += Dfs(s, INF);
-	}
+	for (; bfs(); ) ans += dfs(s, INF);
 	return ans;
 }
 \end{lstlisting}
@@ -941,65 +927,77 @@ i64 Work() {
 \subsection{费用流 (EK)}
 
 \begin{lstlisting}
-using pr = pair<i64, int>;
-const int N = 5e3+10;
-const int M = 1e6+10;
 const i64 INF = 1e16L;
-struct Edge {
-	int to, nxt, v, f;
-} e[M<<1];
-int h[N], num = 1, n, s, t;
-void Add(int x, int y, int v, int f) {
-	e[++num] = {y, h[x], v, f}, h[x] = num;
-	e[++num] = {x, h[y], 0, -f}, h[y] = num;
+using pr = pair<i64, int>;
+struct Node { int to; i64 vol, flow, cost; };
+vector<vector<int>> adj;
+vector<int> from, vis;
+vector<Node> e;
+vector<i64> d, dis;
+int n, s, t; i64 F, C;
+void init(int nn, int ss, int tt) {
+	n = nn, s = ss, t = tt;
+	adj.assign(n+1, {});
+	e = {{}, {}};
+	from.assign(n+1, 0);
+	vis.assign(n+1, 0);
+	d.assign(n+1, 0);
+	dis.assign(n+1, 0);
 }
-i64 d[N], dis[N], f, c;
-int vis[N], fr[N];
-int Spfa() {
+void add(int x, int y, int v, int f) {
+	adj[x].push_back(e.size());
+	e.push_back({y, v, 0, f});
+	adj[y].push_back(e.size());
+	e.push_back({x, 0, 0, -f});
+}
+int spfa() {
 	queue<int> Q;
-	fill(d, d+n+1, INF);
+	d.assign(n+1, INF);
 	for (d[s] = 0, vis[s] = 1, Q.push(s); Q.size(); ) {
 		auto x = Q.front(); Q.pop(); vis[x] = 0;
-		for (int i = h[x]; i; i = e[i].nxt) {
-			if (e[i].v && d[e[i].to] > d[x] + e[i].f) {
-				d[e[i].to] = d[x] + e[i].f;
-				fr[e[i].to] = i;
+		for (auto i : adj[x]) {
+			if (e[i].vol - e[i].flow && d[e[i].to] > d[x] + e[i].cost) {
+				d[e[i].to] = d[x] + e[i].cost;
+				from[e[i].to] = i;
 				if (!vis[e[i].to]) vis[e[i].to] = 1, Q.push(e[i].to);
 			}
 		}
 	}
 	return d[t] < INF;
 }
-int Dij() {
+int dij() {
 	priority_queue<pr, vector<pr>, greater<pr>> Q;
-	REP(i, 1, n) dis[i] = d[i], d[i] = INF, vis[i] = fr[i] = 0;
+	dis.swap(d);
+	d.assign(n+1, INF);
+	vis.assign(n+1, 0);
+	from.assign(n+1, 0);
 	for (Q.emplace(d[s] = 0, s); Q.size(); ) {
 		auto x = Q.top().second; Q.pop();
 		if (vis[x]) continue;
 		vis[x] = 1;
-		for (int i = h[x]; i; i = e[i].nxt) {
-			const i64 v = e[i].f + dis[x] - dis[e[i].to];
-			if (e[i].v && d[e[i].to] > d[x] + v) {
-				fr[e[i].to] = i;
+		for (auto i : adj[x]) {
+			const i64 v = e[i].cost + dis[x] - dis[e[i].to];
+			if (e[i].vol - e[i].flow && d[e[i].to] > d[x] + v) {
+				from[e[i].to] = i;
 				Q.emplace(d[e[i].to] = d[x] + v, e[i].to);
 			}
 		}
 	}
-	for (int i = 1; i <= n; i ++) d[i] += dis[i];
+	for (int i = 0; i <= n; i ++) d[i] += dis[i];
 	return d[t] < INF;
 }
 array<i64, 2> EK() {
-	Spfa();
-	f = c = 0;
-	for (; Dij(); ) {
+	spfa();
+	F = C = 0;
+	for (; dij(); ) {
 		i64 fl = INF;
-		for (int i = fr[t]; i; i = fr[e[i^1].to])
-			fl = min<i64> (e[i].v, fl);
-		for (int i = fr[t]; i; i = fr[e[i^1].to])
-			e[i].v -= fl, e[i^1].v += fl;
-		f += fl, c += fl * d[t];
+		for (int i = from[t]; i; i = from[e[i^1].to])
+			fl = min<i64> (e[i].vol - e[i].flow, fl);
+		for (int i = from[t]; i; i = from[e[i^1].to])
+			e[i].flow += fl, e[i^1].flow -= fl;
+		F += fl, C += fl * d[t];
 	}
-	return {f, c};
+	return {F, C};
 }
 \end{lstlisting}
 
