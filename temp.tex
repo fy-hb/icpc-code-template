@@ -371,10 +371,9 @@ using cp = complex<db>;
 const db PI = acos(-1.L);
 const int N = 4e6+10;
 int rev[N], lim;
-cp wn[N], a[N], b[N];
-int ans[N];
+cp wn[N];
 void init(int siz) {
-	lim = 4 << __lg(siz);
+	lim = 2 << __lg(siz - 1);
 	for (static int i = 1; i < lim; i <<= 1)
 		for (int j = 0; j < i; j ++)
 			wn[i+j] = polar(1.L, db(j) / db(i) * PI);
