@@ -659,7 +659,7 @@ int is_pal(int l, int r) {
 	return p[l+r] > r - l;
 }
 /*
-0 1 2 3 4 5 6 7 8 9 ...... [index]
+0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M [index]
   1   1   1   1   1   11  1   1   1   1   1
 ^ . a . b . c . b . a . a . b . c . b . a . @
     2   2   6   2   2   2   2   6   2   2
@@ -668,24 +668,18 @@ int is_pal(int l, int r) {
 
 \section{数据结构}
 
-\subsection{[后缀加+前缀求和]树状数组}
+\subsection{区间加和树状数组}
 
 \begin{lstlisting}
-void Add(i64 p, i64 v) {
+void Add(i64 p, i64 v) { // 后缀加
 	for (int x = p; x <= n; x += x&-x)
 		ta[x] += v, tb[x] += p * v;
-}
-i64 Query(i64 p, i64 ans = 0) {
+} // [l, r] ==> Add(l, v); Add(r+1, -v);
+i64 Query(i64 p, i64 ans = 0) { // 前缀求和
 	for (int x = p; x; x -= x&-x)
 		ans += (p+1) * ta[x] - tb[x];
 	return ans;
-}
-void A(int l, int r, i64 v) {
-	Add(l, v); Add(r+1, -v);
-}
-i64 Q(int l, int r) {
-	return Query(r) - Query(l-1);
-}
+} // [l, r] ==> Query(r) - Query(l-1);
 \end{lstlisting}
 
 \subsection{二维树状数组}
@@ -1241,37 +1235,37 @@ void tarjan(int u, int fa) {
 cout.setf(ios::fixed); cout.precision(15);
 \end{lstlisting}
 
-\subsection{int128}
-
-\begin{lstlisting}
-istream& operator>>(istream& cin, i128& x) {
-	i128 w = 1, v = 0;
-	string s; cin >> s;
-	for (auto i : s) {
-		if (i == '-') w = -1;
-		else v = v * 10 + (i - '0');
-	}
-    return x = w * v, cin;
-}
-ostream& operator<<(ostream& cout, i128 x) {
-	if (x == 0) return cout << 0;
-	if (x < 0) cout << '-', x = -x;
-	string s;
-	while (x) s += '0' + x % 10, x /= 10;
-	reverse(s.begin(), s.end());
-	return cout << s;
-}
-\end{lstlisting}
+%\subsection{int128 输入输出}
+%
+%\begin{lstlisting}
+%istream& operator>>(istream& cin, i128& x) {
+%	i128 w = 1, v = 0;
+%	string s; cin >> s;
+%	for (auto i : s) {
+%		if (i == '-') w = -1;
+%		else v = v * 10 + (i - '0');
+%	}
+%    return x = w * v, cin;
+%}
+%ostream& operator<<(ostream& cout, i128 x) {
+%	if (x == 0) return cout << 0;
+%	if (x < 0) cout << '-', x = -x;
+%	string s;
+%	while (x) s += '0' + x % 10, x /= 10;
+%	reverse(s.begin(), s.end());
+%	return cout << s;
+%}
+%\end{lstlisting}
 
 \subsection{上取整下取整}
-i64 ceilDiv(i64 n, i64 m) {
+
+\begin{lstlisting}
+i64 ceilDiv(i64 n, i64 m) { // m > 0
 	return n >= 0 ? (n + m - 1) / m : n / m;
 }
-i64 floorDiv(i64 n, i64 m) {
+i64 floorDiv(i64 n, i64 m) { // m > 0
 	return n >= 0 ? n / m : (n - m + 1) / m;
 }
-\begin{lstlisting}
-cout.setf(ios::fixed); cout.precision(15);
 \end{lstlisting}
 
 \subsection{mmap映射stdin}
@@ -1304,19 +1298,16 @@ int read() { // 换成 getchar_unlocked 可加快速度
 \subsection{随机相关}
 
 \begin{lstlisting}
-mt19937_64 rd(chrono::system_clock::now().time_since_epoch().count());
+mt19937 rnd(chrono::system_clock::now().time_since_epoch().count());
 \end{lstlisting}
 
 \subsection{二进制相关}
 
-\point{遍历所有含1个数相同的数}
+\point{遍历所有 cnt1 相同的数}
 
 \begin{lstlisting}
 u64 nxt(u64 x) {
-	u64 b = x&(~x+1);
-	u64 t = x + b;
-	u64 c = t&(~t+1);
-	u64 m = (c/b>>1)-1;
+	u64 b = x&(~x+1), t = x + b, c = t&(~t+1), m = (c/b>>1)-1;
 	return t | m;
 }
 /*
@@ -1386,7 +1377,6 @@ u64 y = __builtin_bswap64(0xaabbccddeeff1122ULL);
 \begin{lstlisting}
 #include<ext/pb_ds/assoc_container.hpp>
 #include<ext/pb_ds/hash_policy.hpp>
-
 __gnu_pbds::gp_hash_table<int, int> mp1; // 拉链法
 __gnu_pbds::cc_hash_table<int, int> mp2; // 探测法
 \end{lstlisting}
@@ -1396,7 +1386,6 @@ __gnu_pbds::cc_hash_table<int, int> mp2; // 探测法
 \begin{lstlisting}
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-
 template<class T, class TT = __gnu_pbds::null_type>
 using ordered_set = __gnu_pbds::tree<
 	T, TT, std::less<T>,
@@ -1404,12 +1393,12 @@ using ordered_set = __gnu_pbds::tree<
 	// rb_tree_tag 红黑树
 	// splay_tree_tag splay树
 	__gnu_pbds::tree_order_statistics_node_update
-	>;
+>;
 \end{lstlisting}
 
 \texttt{order\_of\_key(x)}  返回比 x 小的数的数量。
 
-\texttt{find\_by\_order(x)}  返回排名 x 所对应元素的迭代器
+\texttt{find\_by\_order(x)}  返回排名 x 所对应元素的迭代器。
 
 \begin{lstlisting}
 ordered_set<int> s;
@@ -1452,194 +1441,200 @@ rp.erase(2, 3);          // 12*bcd$;;;;
 rp.insert(6, 3, '!');    // 12*bcd!!!$;;;;
 \end{lstlisting}
 
-\subsection{多项式输出}
+\subsection{时间相关}
 
-\begin{lstlisting}
-i64 n; cin >> n; vl xishu(n+1);
-REV(i, n, 0) cin >> xishu[i];
-REV(i, n, 0) {
-	if (xishu[i] == 0) continue;
-	else if (xishu[i] < 0)
-	cout << '-', xishu[i] = -xishu[i];
-	else if (xishu[i] > 0 && i != n)
-	cout << '+';
-	if (xishu[i] != 1 || i == 0)
-	cout << xishu[i];
-	if (i > 1) cout << 'x' << '^' << i;
-	else if (i == 1) cout << 'x';
-} cout << endl;
-\end{lstlisting}
+真遇到这种大模拟，建议参考下列源代码（低版本可能直接叫 \texttt{datetime.py}）
 
-\subsection{日期}
+\texttt{/usr/lib/python3.13/\_pydatetime.py}
 
-\begin{lstlisting}
-int days[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
-struct Date {
-	int year, month, day;
-};
-//判闰年
-inline int leap(int year) {
-	return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
-}
-//判合法性
-inline int legal(Date a) {
-	if (a.month < 0 || a.month>12)
-	return 0;
-	if (a.month == 2)
-	return a.day > 0 && a.day <= 28 + leap(a.year);
-	return a.day > 0 && a.day <= days[a.month - 1];
-}
-//比较日期大小
-inline int datecmp(Date a, Date b) {
-	if (a.year != b.year)
-	return a.year - b.year;
-	if (a.month != b.month)
-	return a.month - b.month;
-	return a.day - b.day;
-}
-//返回指定日期是星期几
-int weekday(Date a) {
-	int tm = a.month >= 3 ? (a.month - 2) : (a.month + 10);
-	int ty = a.month >= 3 ? a.year : (a.year - 1);
-	return (ty + ty / 4 - ty / 100 + ty / 400 + (int)(2.6 * tm - 0.2) + a.day) % 7;
-}
-//日期转天数偏移
-int date2int(Date a) {
-	int ret = a.year * 365 + (a.year - 1) / 4 - (a.year - 1) / 100 + (a.year - 1) / 400;
-	days[1] += leap(a.year);
-	for (int i = 0; i < a.month - 1; ret += days[i++]);
-	days[1] = 28;
-	return ret + a.day;
-}
-//天数偏移转日期
-Date int2date(int a) {
-	Date ret = {0, 0, 0};
-	ret.year = a / 146097 * 400;
-	for (a %= 146097; a >= 365 + leap(ret.year); a -= 365 + leap(ret.year), ret.year++);
-	days[1] += leap(ret.year);
-	for (ret.month = 1; a >= days[ret.month - 1]; a -= days[ret.month - 1], ret.month++);
-	days[1] = 28;
-	ret.day = a + 1;
-	return ret;
-}
-\end{lstlisting}
+%\subsection{多项式输出}
+%
+%\begin{lstlisting}
+%i64 n; cin >> n; vl xishu(n+1);
+%REV(i, n, 0) cin >> xishu[i];
+%REV(i, n, 0) {
+%	if (xishu[i] == 0) continue;
+%	else if (xishu[i] < 0)
+%	cout << '-', xishu[i] = -xishu[i];
+%	else if (xishu[i] > 0 && i != n)
+%	cout << '+';
+%	if (xishu[i] != 1 || i == 0)
+%	cout << xishu[i];
+%	if (i > 1) cout << 'x' << '^' << i;
+%	else if (i == 1) cout << 'x';
+%} cout << endl;
+%\end{lstlisting}
 
-\begin{lstlisting}
-auto E_is_leap = [&] (int y) -> int {
-	if (y % 400 == 0) return 1;
-	if (y % 100 == 0) return 0;
-	if (y % 4 == 0) return 1;
-	return 0;
-};
-vector<int> E_days = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-auto E_days_in_month = [&] (int y, int m) -> int {
-	assert(1 <= m && m <= 12);
-	if (m == 2 && E_is_leap(y)) return E_days[m] + 1;
-	return E_days[m];
-};
-vector<int> E_days_presum(13);
-REP(i, 1, 12) {
-	E_days_presum[i] = E_days_presum[i-1] + E_days[i];
-}
-auto E_days_before_month = [&] (int y, int m) -> int {
-	if (E_is_leap(y) && m >= 3) return E_days_presum[m-1] + 1;
-	return E_days_presum[m-1];
-};
-auto E_days_before_day = [&] (int y, int m, int d) {
-	return E_days_before_month(y, m) + d - 1;
-};
-auto E_days_before_year = [&] (int y) {
-	y --;
-	return y*365 + y/4 - y/100 + y/400;
-};
-auto E_get_ord = [&] (int y, int m, int d) {
-	return E_days_before_year(y) + E_days_before_day(y, m, d);
-};
-constexpr i64 E_seconds_in_day = 1ll * 24 * 60 * 60;
-auto E_get_ts = [&] (int Y, int m, int d, int H, int M, int S) -> i64 {
-	return E_get_ord(Y, m, d) * E_seconds_in_day
-	+ 1ll * 60 * 60 * H
-	+ 1ll * 60 * M
-	+ 1ll * S;
-};
-// cout << E_get_ts(2024, 11, 11, 0, 0, 0)
-//	  - E_get_ts(1970, 1, 1, 0, 0, 0) << endl;
-auto M_is_leap = [&] (int y) -> int {
-	if (y % 1000 == 0) return 1;
-	if (y % 100 == 0) return 0;
-	if (y % 10 == 0) return 1;
-	if (y % 2 == 1) return 1;
-	return 0;
-};
-auto M_days_in_month = [&] (int y, int m) -> int {
-	assert(1 <= m && m <= 24);
-	if (m == 24 && M_is_leap(y)) return 28;
-	if (m % 6 == 0) return 27;
-	return 28;
-};
-vector<int> M_days = {0, 28, 28, 28, 28, 28, 27, 28, 28, 28, 28, 28, 27, 28, 28, 28, 28, 28, 27, 28, 28, 28, 28, 28, 27};
-vector<int> M_days_presum(25);
-REP(i, 1, 24) {
-	M_days_presum[i] = M_days_presum[i-1] + M_days[i];
-}
-auto M_days_before_month = [&] (int y, int m) -> int {
-	return M_days_presum[m-1];
-};
-auto M_days_before_day = [&] (int y, int m, int d) {
-	return M_days_before_month(y, m) + d - 1;
-};
-auto M_days_before_year = [&] (int y) {
-	y --;
-	return (y+1)*669 - y/2 + y/10 - y/100 + y/1000;
-};
-auto M_get_ord = [&] (int y, int m, int d) {
-	return M_days_before_year(y) + M_days_before_day(y, m, d);
-};
-constexpr i64 M_seconds_in_day = 1ll * 24 * 60 * 60;
-auto M_get_ts = [&] (int Y, int m, int d, int H, int M, int S) -> i64 {
-	return M_get_ord(Y, m, d) * M_seconds_in_day
-	+ 1ll * 60 * 60 * H
-	+ 1ll * 60 * M
-	+ 1ll * S;
-};
-auto M_ord_to_ymd = [&] (int ts) -> array<int, 3> {
-	int year = int(floor(db(ts)/668.59L));
-	if (ts <= M_days_before_year(year)) year --;
-	else if (ts > M_days_before_year(year+1)) year ++;
-	ts -= M_days_before_year(year);
-	int month = ts / 28 + 1;
-	if (ts <= M_days_before_month(year, month)) month --;
-	else if (month < 24 && ts > M_days_before_month(year, month+1))
-	month ++;
-	ts -= M_days_before_month(year, month);
-	return {year, month, ts};
-};
-constexpr db _1SOL = 88775.244147L;  // unit: terrestrial second
-constexpr db _M2EC = _1SOL/86400.L;  // 1sol / 1day
-constexpr db _E2MC = 86400.L/_1SOL;  // 1day / 1sol
-auto E2M = [&] (int Y, int m, int d, int H, int M, int S) -> array<int, 6> {
-	db E_ts = E_get_ts(Y, m, d, H, M, S)
-	- E_get_ts(1609, 3, 11, 18, 40, 34);
-	db M_ts = E_ts / _1SOL;
-	db M_time = fmodl(M_ts, 1.L);
-	db M_date = M_ts - M_time + 1.L;
-	M_time *= M_seconds_in_day;
-	auto [x, y, z] = M_ord_to_ymd(M_date);
-	int M_time_int = int(M_time);
-	int c = M_time_int % 60;
-	M_time_int /= 60;
-	int b = M_time_int % 60;
-	M_time_int /= 60;
-	int a = M_time_int;
-	return {x, y, z, a, b, c};
-};
-char tmp;
-int Y, m, d, H, M, S;
-cin >> Y >> tmp >> m >> tmp >> d;
-cin >> H >> tmp >> M >> tmp >> S;
-auto [x, y, z, a, b, c] = E2M(Y, m, d, H, M, S);
-printf("%04d-%02d-%02d %02d:%02d:%02d\n", x, y, z, a, b, c);
-\end{lstlisting}
+%\subsection{日期}
+%
+%\begin{lstlisting}
+%int days[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+%struct Date {
+%	int year, month, day;
+%};
+%//判闰年
+%inline int leap(int year) {
+%	return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+%}
+%//判合法性
+%inline int legal(Date a) {
+%	if (a.month < 0 || a.month>12)
+%	return 0;
+%	if (a.month == 2)
+%	return a.day > 0 && a.day <= 28 + leap(a.year);
+%	return a.day > 0 && a.day <= days[a.month - 1];
+%}
+%//比较日期大小
+%inline int datecmp(Date a, Date b) {
+%	if (a.year != b.year)
+%	return a.year - b.year;
+%	if (a.month != b.month)
+%	return a.month - b.month;
+%	return a.day - b.day;
+%}
+%//返回指定日期是星期几
+%int weekday(Date a) {
+%	int tm = a.month >= 3 ? (a.month - 2) : (a.month + 10);
+%	int ty = a.month >= 3 ? a.year : (a.year - 1);
+%	return (ty + ty / 4 - ty / 100 + ty / 400 + (int)(2.6 * tm - 0.2) + a.day) % 7;
+%}
+%//日期转天数偏移
+%int date2int(Date a) {
+%	int ret = a.year * 365 + (a.year - 1) / 4 - (a.year - 1) / 100 + (a.year - 1) / 400;
+%	days[1] += leap(a.year);
+%	for (int i = 0; i < a.month - 1; ret += days[i++]);
+%	days[1] = 28;
+%	return ret + a.day;
+%}
+%//天数偏移转日期
+%Date int2date(int a) {
+%	Date ret = {0, 0, 0};
+%	ret.year = a / 146097 * 400;
+%	for (a %= 146097; a >= 365 + leap(ret.year); a -= 365 + leap(ret.year), ret.year++);
+%	days[1] += leap(ret.year);
+%	for (ret.month = 1; a >= days[ret.month - 1]; a -= days[ret.month - 1], ret.month++);
+%	days[1] = 28;
+%	ret.day = a + 1;
+%	return ret;
+%}
+%\end{lstlisting}
+
+%\begin{lstlisting}
+%auto E_is_leap = [&] (int y) -> int {
+%	if (y % 400 == 0) return 1;
+%	if (y % 100 == 0) return 0;
+%	if (y % 4 == 0) return 1;
+%	return 0;
+%};
+%vector<int> E_days = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+%auto E_days_in_month = [&] (int y, int m) -> int {
+%	assert(1 <= m && m <= 12);
+%	if (m == 2 && E_is_leap(y)) return E_days[m] + 1;
+%	return E_days[m];
+%};
+%vector<int> E_days_presum(13);
+%REP(i, 1, 12) {
+%	E_days_presum[i] = E_days_presum[i-1] + E_days[i];
+%}
+%auto E_days_before_month = [&] (int y, int m) -> int {
+%	if (E_is_leap(y) && m >= 3) return E_days_presum[m-1] + 1;
+%	return E_days_presum[m-1];
+%};
+%auto E_days_before_day = [&] (int y, int m, int d) {
+%	return E_days_before_month(y, m) + d - 1;
+%};
+%auto E_days_before_year = [&] (int y) {
+%	y --;
+%	return y*365 + y/4 - y/100 + y/400;
+%};
+%auto E_get_ord = [&] (int y, int m, int d) {
+%	return E_days_before_year(y) + E_days_before_day(y, m, d);
+%};
+%constexpr i64 E_seconds_in_day = 1ll * 24 * 60 * 60;
+%auto E_get_ts = [&] (int Y, int m, int d, int H, int M, int S) -> i64 {
+%	return E_get_ord(Y, m, d) * E_seconds_in_day
+%	+ 1ll * 60 * 60 * H
+%	+ 1ll * 60 * M
+%	+ 1ll * S;
+%};
+%// cout << E_get_ts(2024, 11, 11, 0, 0, 0)
+%//	  - E_get_ts(1970, 1, 1, 0, 0, 0) << endl;
+%auto M_is_leap = [&] (int y) -> int {
+%	if (y % 1000 == 0) return 1;
+%	if (y % 100 == 0) return 0;
+%	if (y % 10 == 0) return 1;
+%	if (y % 2 == 1) return 1;
+%	return 0;
+%};
+%auto M_days_in_month = [&] (int y, int m) -> int {
+%	assert(1 <= m && m <= 24);
+%	if (m == 24 && M_is_leap(y)) return 28;
+%	if (m % 6 == 0) return 27;
+%	return 28;
+%};
+%vector<int> M_days = {0, 28, 28, 28, 28, 28, 27, 28, 28, 28, 28, 28, 27, 28, 28, 28, 28, 28, 27, 28, 28, 28, 28, 28, 27};
+%vector<int> M_days_presum(25);
+%REP(i, 1, 24) {
+%	M_days_presum[i] = M_days_presum[i-1] + M_days[i];
+%}
+%auto M_days_before_month = [&] (int y, int m) -> int {
+%	return M_days_presum[m-1];
+%};
+%auto M_days_before_day = [&] (int y, int m, int d) {
+%	return M_days_before_month(y, m) + d - 1;
+%};
+%auto M_days_before_year = [&] (int y) {
+%	y --;
+%	return (y+1)*669 - y/2 + y/10 - y/100 + y/1000;
+%};
+%auto M_get_ord = [&] (int y, int m, int d) {
+%	return M_days_before_year(y) + M_days_before_day(y, m, d);
+%};
+%constexpr i64 M_seconds_in_day = 1ll * 24 * 60 * 60;
+%auto M_get_ts = [&] (int Y, int m, int d, int H, int M, int S) -> i64 {
+%	return M_get_ord(Y, m, d) * M_seconds_in_day
+%	+ 1ll * 60 * 60 * H
+%	+ 1ll * 60 * M
+%	+ 1ll * S;
+%};
+%auto M_ord_to_ymd = [&] (int ts) -> array<int, 3> {
+%	int year = int(floor(db(ts)/668.59L));
+%	if (ts <= M_days_before_year(year)) year --;
+%	else if (ts > M_days_before_year(year+1)) year ++;
+%	ts -= M_days_before_year(year);
+%	int month = ts / 28 + 1;
+%	if (ts <= M_days_before_month(year, month)) month --;
+%	else if (month < 24 && ts > M_days_before_month(year, month+1))
+%	month ++;
+%	ts -= M_days_before_month(year, month);
+%	return {year, month, ts};
+%};
+%constexpr db _1SOL = 88775.244147L;  // unit: terrestrial second
+%constexpr db _M2EC = _1SOL/86400.L;  // 1sol / 1day
+%constexpr db _E2MC = 86400.L/_1SOL;  // 1day / 1sol
+%auto E2M = [&] (int Y, int m, int d, int H, int M, int S) -> array<int, 6> {
+%	db E_ts = E_get_ts(Y, m, d, H, M, S)
+%	- E_get_ts(1609, 3, 11, 18, 40, 34);
+%	db M_ts = E_ts / _1SOL;
+%	db M_time = fmodl(M_ts, 1.L);
+%	db M_date = M_ts - M_time + 1.L;
+%	M_time *= M_seconds_in_day;
+%	auto [x, y, z] = M_ord_to_ymd(M_date);
+%	int M_time_int = int(M_time);
+%	int c = M_time_int % 60;
+%	M_time_int /= 60;
+%	int b = M_time_int % 60;
+%	M_time_int /= 60;
+%	int a = M_time_int;
+%	return {x, y, z, a, b, c};
+%};
+%char tmp;
+%int Y, m, d, H, M, S;
+%cin >> Y >> tmp >> m >> tmp >> d;
+%cin >> H >> tmp >> M >> tmp >> S;
+%auto [x, y, z, a, b, c] = E2M(Y, m, d, H, M, S);
+%printf("%04d-%02d-%02d %02d:%02d:%02d\n", x, y, z, a, b, c);
+%\end{lstlisting}
 
 \subsection{快速排序}
 
@@ -1751,8 +1746,30 @@ ulimit -v 1048576
 \subsection{Xor \space Shift}
 
 \begin{lstlisting}
-u64 xorshift(u64 x) { x ^= x << 13; x ^= x >> 7; x ^= x << 17; return x; }
-u32 xorshift(u32 x) { x ^= x << 13; x ^= x >> 17; x ^= x << 5; return x; }
+u64 xorshift(u64 x) { return x^=x<<13, x^=x>>7, x^=x<<17, x; }
+u32 xorshift(u32 x) { return x^=x<<13, x^=x>>17, x^=x<<5, x; }
+\end{lstlisting}
+
+\subsection{python Decimal}
+
+\begin{lstlisting}[language=python]
+from decimal import Decimal, getcontext, localcontext
+getcontext().prec = 1000 # 全局环境 精度为 1000
+with localcontext() as ctx:
+	ctx.prec = 1000 # 临时环境
+a = Decimal(``1.14514'') # a.sqrt(), a.ln(), a.exp(), ...
+\end{lstlisting}
+
+\subsection{python Fractions}
+
+\begin{lstlisting}[language=python]
+from fractions import Fraction
+a = Fraction(3, 4)    # 3/4
+f.numerator    # 3
+f.denominator  # 4
+# 找到最接近的分数，分母不超过指定值
+Fraction('3.1415926535897932').limit_denominator(10)  # 22/7
+Fraction('3.1415926535897932').limit_denominator(100)  # 311/99
 \end{lstlisting}
 
 %\subsection{质数表}
