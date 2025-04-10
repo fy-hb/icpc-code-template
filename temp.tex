@@ -19,7 +19,7 @@
 \usepackage {graphicx}
 
 %\setmainfont{LXGW WenKai}
-\setmainfont{Source Han Serif CN SemiBold}
+%\setmainfont{Source Han Serif CN SemiBold}
 %\setmathrm{Source Han Serif CN SemiBold}
 %\setmathsf{Source Han Serif CN SemiBold}
 %\setmathtt{Source Han Serif CN SemiBold}
@@ -49,7 +49,7 @@
 \renewcommand\tableofcontents{%
 	\section*{\makebox[\linewidth][c]{\contentsname}%
 		\@mkboth{\MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
-	\begin{multicols}{2}%
+	\begin{multicols}{3}%
 		\@starttoc{toc}%
 	\end{multicols}
 }
@@ -191,70 +191,64 @@ int euler_phi(int n) {
 inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
 \end{lstlisting}
 
-\subsection{线性筛}
+%\subsection{线性筛}
+%
+%\begin{lstlisting}[]
+%const int N = 1e5+10;
+%bitset<N> vis;
+%vector<int> primes;
+%// Mobius函数, 欧拉函数
+%int mu[N], phi[N];
+%// 约数个数, 最小质因子数量
+%int d[N], num[N];
+%// 约数和, 最小质因子的p^0+p^1+...+p^k
+%int f[N], g[N];
+%static inline void Init(int n) {
+%	vis[1] = 1;
+%	mu[1] = 1;
+%	phi[1] = 1;
+%	d[1] = 1, num[1] = 0;
+%	g[1] = f[1] = 1;
+%	for (int i = 2; i <= n; i ++) {
+%		if (!vis[i]) {
+%			primes.push_back(i);
+%			mu[i] = -1;
+%			phi[i] = i-1;
+%			num[i] = 1, d[i] = 2;
+%			g[1] = f[1] = i+1;
+%		}
+%		for (auto j : primes) {
+%			if (i*j > n) break;
+%			vis[i*j] = 1;
+%			mu[i*j] = -mu[i];
+%			phi[i*j] = phi[i]*phi[j];
+%			num[i*j] = 1, d[i*j] = d[i]<<1;
+%			g[i*j] = j+1, f[i*j] = f[i]*f[j];
+%			if (i%j == 0) {
+%				mu[i*j] = 0;
+%				phi[i*j] = phi[i]*j;
+%				num[i*j] = num[i]+1, d[i*j] = d[i] / (num[i]+1) * (num[i]+2);
+%				g[i*j] = g[i]*j+1, f[i*j] = f[i] / g[i] * g[i*j];
+%				break;
+%			}
+%		}
+%	}
+%}
+%\end{lstlisting}
 
-\begin{lstlisting}[]
-const int N = 1e5+10;
-bitset<N> vis;
-vector<int> primes;
-// Mobius函数, 欧拉函数
-int mu[N], phi[N];
-// 约数个数, 最小质因子数量
-int d[N], num[N];
-// 约数和, 最小质因子的p^0+p^1+...+p^k
-int f[N], g[N];
-static inline void Init(int n) {
-	vis[1] = 1;
-	mu[1] = 1;
-	phi[1] = 1;
-	d[1] = 1, num[1] = 0;
-	g[1] = f[1] = 1;
-	for (int i = 2; i <= n; i ++) {
-		if (!vis[i]) {
-			primes.push_back(i);
-			mu[i] = -1;
-			phi[i] = i-1;
-			num[i] = 1, d[i] = 2;
-			g[1] = f[1] = i+1;
-		}
-		for (auto j : primes) {
-			if (i*j > n) break;
-			vis[i*j] = 1;
-			mu[i*j] = -mu[i];
-			phi[i*j] = phi[i]*phi[j];
-			num[i*j] = 1, d[i*j] = d[i]<<1;
-			g[i*j] = j+1, f[i*j] = f[i]*f[j];
-			if (i%j == 0) {
-				mu[i*j] = 0;
-				phi[i*j] = phi[i]*j;
-				num[i*j] = num[i]+1, d[i*j] = d[i] / (num[i]+1) * (num[i]+2);
-				g[i*j] = g[i]*j+1, f[i*j] = f[i] / g[i] * g[i*j];
-				break;
-			}
-		}
-	}
-}
-\end{lstlisting}
+\subsection{常见积性函数}
+
+\begin{itemize}
+\item $\mathrm{\epsilon}$ 函数（单位函数）：$\mathrm{\epsilon} (p ^ \alpha) = 0$；
+\item $\mathrm{I}$ 函数：$\mathrm{I} (p ^ \alpha) = 1$；
+\item $\mathrm{id}_t$ 函数：$\mathrm{id}_t (p ^ \alpha) = p ^ {\alpha t}$；
+\item $\mathrm{\mu}$ 函数：$\mathrm{\mu} (p ^ \alpha) = - \left [ \alpha = 1 \right ]$；
+\item $\mathrm{\phi}$ 函数：$\mathrm{\phi} (p ^ \alpha) = (p - 1) p ^ {\alpha - 1}$；
+\item $\mathrm{d}$ 函数（约数个数）：$\mathrm{d} (p ^ \alpha) = \alpha + 1$；
+\item $\mathrm{\sigma}_1$ 函数（约数和）：$\mathrm{\sigma}_1 (p ^ \alpha) = \sum_{i = 0}^{\alpha} p ^ i$；
+\end{itemize}
 
 \subsection{Miller–Rabin}
-
-\begin{lstlisting}[]
-int millerRabin(i64 n) {
-	if (n < 3 || n % 2 == 0) return n == 2;
-	i64 u = n - 1, t = 0;
-	while (u % 2 == 0) u /= 2, ++t;
-	for (i64 i = 0; i < test_time; ++i) {
-		i64 a = rand() % (n-2) + 2, v = qpow(a, u, n);
-		if (v == 1) continue;
-		for (i64 s = 0; s < t; ++s) {
-			if (v == n-1) break;
-			if (s == t-1) return 0;
-			v = i64(v) * v % n;
-		}
-	}
-	return 1;
-}
-\end{lstlisting}
 
 \begin{lstlisting}
 i64 mul(i64 a, i64 b, i64 p) {
@@ -295,9 +289,9 @@ i64 PR(i64 p) { // p > 1 && not prime
 }
 \end{lstlisting}
 
-\subsection{Mint}
+\subsection{Mod Int}
 
-\begin{lstlisting}[]
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 constexpr int mod = 998'244'353;
 constexpr int Normal(int x, int m = mod) { return x<0&&(x+=m), x; }
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
@@ -483,66 +477,63 @@ void gen(int a, int b, int c) { // a < b
 \subsection{组合数}
 
 \begin{lstlisting}
-i64 fac[N], inv[N];
+int fac[N], inv[N];
 static inline void Init(i64 n) {
 	fac[0] = 1;
 	REP(i, 1, n)
-		fac[i] = fac[i-1] * i % mod;
+		fac[i] = (u64) fac[i-1] * i % mod;
 	inv[n] = qpow(fac[n], mod - 2);
 	REV(i, n, 1)
-		inv[i-1] = inv[i] * i % mod;
+		inv[i-1] = (u64) inv[i] * i % mod;
 }
 static inline i64 C(i64 x, i64 y) {
 	if (y > x || y < 0) return 0;
-	return (fac[x]*inv[y]%mod)*inv[x-y] % mod;
+	return (u64) fac[x] * inv[y] % mod * inv[x-y] % mod;
 }
 \end{lstlisting}
 
 \subsection{组合数学相关}
 
 \begin{lstlisting}[]
-// c[p]中 i个元素>=k的方案数.
+// c[p]中 i个元素>=k的方案数
 inline i64 calc(i64 p, i64 m, i64 k, i64 i) {
 	if (i * k > m || i > p) return 0;
-	return (C(p, i) * C(m-i*k+p-1, p-1) % mod + mod - calc(p, m, k, i+1)) % mod;
+	return (C(p,i)*C(m-i*k+p-1,p-1)+mod-calc(p,m,k,i+1))%mod;
 }
 \end{lstlisting}
 
 \subsection{小球装盒问题}
 
-\renewcommand{\arraystretch}{1.5}
+%\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|c|c|c|c|}
 	\hline
 	k 个球 & m 个盒子 & 允许有空 & 方案数 \\
 	\hline
-	\multirow{4}{*}[0em]{各不相同} & \multirow{2}{*}[0em]{各不相同} & 是 & \Large$m ^ k$ \\
+	\multirow{4}{*}[0em]{各不相同} & \multirow{2}{*}[0em]{各不相同} & 是 & $m ^ k$ \\
 	\cline{3-4}
-	& & 否 & \Large$m ! \cdot St2 (k, m)$ \\
+	& & 否 & $m ! \cdot St2 (k, m)$ \\
 	\cline{2-4}
-	& \multirow{2}{*}[0em]{完全相同} & 是 & \Large$\sum_{i=1}^{m} {St2 (k, i)}$ \\
+	& \multirow{2}{*}[0em]{完全相同} & 是 & $\sum_{i=1}^{m} {St2 (k, i)}$ \\
 	\cline{3-4}
-	& & 否 & \Large$St2 (k, m)$ \\
+	& & 否 & $St2 (k, m)$ \\
 	\hline
-	\multirow{4}{*}[0em]{完全相同} & \multirow{2}{*}[0em]{各不相同} & 是 & \Large$C (m + k - 1, m-1)$ \\
+	\multirow{4}{*}[0em]{完全相同} & \multirow{2}{*}[0em]{各不相同} & 是 & $C (m + k - 1, m-1)$ \\
 	\cline{3-4}
-	& & 否 & \Large$C (k-1, m-1)$ \\
+	& & 否 & $C (k-1, m-1)$ \\
 	\cline{2-4}
-	& \multirow{2}{*}[0em]{完全相同} & 是 & \Large$[x^k] \prod_{i=1}^{m} \frac{1}{1 - x ^ i}$ \\
+	& \multirow{2}{*}[0em]{完全相同} & 是 & $[x^k] \prod_{i=1}^{m} \frac{1}{1 - x ^ i}$ \\
 	\cline{3-4}
-	& & 否 & \Large$ [x^k] \prod_{i=1}^{m} \frac{x ^ m}{1 - x ^ i} $ \\
+	& & 否 & $ [x^k] \prod_{i=1}^{m} \frac{x ^ m}{1 - x ^ i} $ \\
 	\hline
 \end{tabular}
 
 \subsection{FFT}
 
 \begin{lstlisting}
-using db = long double;
-// cp::real  cp::imag  std::conj  std::arg
 using cp = complex<db>;
+// cp::real  cp::imag  std::conj  std::arg
 const db PI = acos(-1.L);
-const int N = 4e6+10;
-int rev[N], lim;
-cp wn[N];
+int rev[N], lim; cp wn[N];
 void init(int siz) {
 	lim = 2 << __lg(siz - 1);
 	for (static int i = 1; i < lim; i <<= 1)
@@ -572,26 +563,22 @@ void idft(cp* a) {
 \subsection{FMT / 或卷积}
 
 \begin{lstlisting}
-void fmt(int* a) {
-	// n = 1 << d
-	REP(i, 0, d-1) REP(j, 0, n-1) if (j&(1<<i))
-		// ifmt: a[j] -= a[j^(1<<i)];
+void fmt(int* a) { // n = 1 << d
+	REP(i, 0, d-1) REP(j, 0, n-1) if (1<<i&j)
 		a[j] += a[j^(1<<i)];
-}
+}// ifmt: a[j] -= a[j^(1<<i)];
 \end{lstlisting}
 
 \subsection{子集卷积}
 
 \begin{lstlisting}
-cin >> d; n = 1 << d;
-REP(i, 0, n-1) cin >> a[__builtin_popcount(i)][i];
-REP(i, 0, n-1) cin >> b[__builtin_popcount(i)][i];
+// n = 1 << d;
+// in: a/b[__builtin_popcount(i)][i];
 REP(i, 0, d) fmt(a[i]), fmt(b[i]);
 REP(i, 0, n-1) REP(j, 0, d) REP(k, 0, d-j)
 	c[j+k][i] += 1ll * a[j][i] * b[k][i];
 REP(i, 0, d) ifmt(c[i]);
-REP(i, 0, n-1)
-	cout << c[__builtin_popcount(i)][i] << " \n"[i==n-1];
+// out: c[__builtin_popcount(i)][i]
 \end{lstlisting}
 
 \subsection{FWT}
@@ -879,27 +866,20 @@ int Get(int l, int r) {
 \subsection{FHQ \space Treap}
 
 \begin{lstlisting}
-const int N = 2e5+10;
-mt19937 rnd(2333);
-int root, cnt, x, y, z;
-struct hh{ int v, w, size, ls, rs; } tr[N];
-#define ls(x) tr[x].ls
-#define rs(x) tr[x].rs
-void pushup(int u){ tr[u].size = 1 + tr[ls(u)].size + tr[rs(u)].size; }
-int newnode(int v) { return tr[++cnt] = {v, int(rnd()), 1}, cnt; }
+struct hh{ int v, w, ls, rs; } tr[N]; // ...
+void pushup(int u) {  } // ...
 int merge(int x, int y) {
 	if (!x || !y) return x ^ y;
-	if (tr[x].w > tr[y].w) return rs(x) = merge(rs(x), y), pushup(x), x;
-	return ls(y) = merge(x, ls(y)), pushup(y), y;
+	if (tr[x].w > tr[y].w)  // 有标记先 pushdown(x);
+		return tr[x].rs = merge(tr[x].rs, y), pushup(x), x;
+	return tr[y].ls = merge(x,tr[y].ls), pushup(y), y; // pushdown(y);
 }
 void split(int u, int v, int &x, int &y) { // <= w | > w
-	if (!u) return x = y = 0, void();
-	if (tr[u].v <= v) x = u, split(rs(u), v, rs(u), y);
-	else y = u, split(ls(u), v, x, ls(u));
+	if (!u) return x = y = 0, void(); // pushdown(u);
+	if (tr[u].v <= v) x = u, split(tr[u].rs, v, tr[u].rs, y);
+	else y = u, split(tr[u].ls, v, x, tr[u].ls);
 	pushup(u);
 }
-#undef ls
-#undef rs
 \end{lstlisting}
 
 \subsection{笛卡尔树}
@@ -909,58 +889,56 @@ int lc[N], rc[N], s[N], n, p;
 void build () { // v: i ; w: a[i] ; root=rc[0]
 	for (int i = 1;i <= n;++i) { // 大根堆则是 <
 		while (p && (a[s[p]] > a[i])) p--;
-		lc[i] = rc[s[p]];
-		rc[s[p]] = i;
-		s[++p] = i;
+		lc[i] = rc[s[p]], rc[s[p]] = i, s[++p] = i;
 	}
 }
 \end{lstlisting}
 
-\subsection{普通矩阵}
-
-\begin{lstlisting}
-template <size_t N, size_t M, typename T = i64>
-using Mat = array<array<T, M>, N>;
-
-template <size_t N, size_t M, typename T>
-Mat<N, M, T> operator+ (const Mat<N, M, T> &a, const Mat<N, M, T> &b) {
-	Mat<N, M, T> res {};
-	REP(i, 0, N-1) REP(j, 0, M-1) res[i][j] = a[i][j] + b[i][j];
-	return res;
-}
-template <size_t N, size_t M, typename T>
-Mat<N, M, T> operator- (const Mat<N, M, T> &a, const Mat<N, M, T> &b) {
-	Mat<N, M, T> res {};
-	REP(i, 0, N-1) REP(j, 0, M-1) res[i][j] = a[i][j] - b[i][j];
-	return res;
-}
-template <size_t N, size_t M, size_t K, typename T>
-constexpr Mat<N, K, T> operator* (const Mat<N, M, T> &a, const Mat<M, K, T> &b) {
-	Mat<N, K, T> res {};
-	REP(i, 0, N-1) REP(j, 0, M-1) REP(k, 0, K-1)
-		res[i][k] += a[i][j] * b[j][k];
-	return res;
-}
-\end{lstlisting}
-
-\subsection{(max, +)矩阵}
-
-\begin{lstlisting}
-template <typename Ty>
-constexpr void chmax(Ty &a, Ty b) {
-	if (b > a) a = b;
-}
-template <size_t N, typename T = i64>
-using Mat = array<array<T, N>, N>;
-template <size_t N, typename T>
-constexpr Mat<N, T> operator* (const Mat<N, T> &a, const Mat<N, T> &b) {
-	Mat<N, T> res {};
-	REP(i, 0, N-1) REP(k, 0, N-1) res[i][k] = -1e16;
-	REP(i, 0, N-1) REP(j, 0, N-1) REP(k, 0, N-1)
-		chmax(res[i][k], a[i][j] + b[j][k]);
-	return res;
-}
-\end{lstlisting}
+%\subsection{普通矩阵}
+%
+%\begin{lstlisting}
+%template <size_t N, size_t M, typename T = i64>
+%using Mat = array<array<T, M>, N>;
+%
+%template <size_t N, size_t M, typename T>
+%Mat<N, M, T> operator+ (const Mat<N, M, T> &a, const Mat<N, M, T> &b) {
+%	Mat<N, M, T> res {};
+%	REP(i, 0, N-1) REP(j, 0, M-1) res[i][j] = a[i][j] + b[i][j];
+%	return res;
+%}
+%template <size_t N, size_t M, typename T>
+%Mat<N, M, T> operator- (const Mat<N, M, T> &a, const Mat<N, M, T> &b) {
+%	Mat<N, M, T> res {};
+%	REP(i, 0, N-1) REP(j, 0, M-1) res[i][j] = a[i][j] - b[i][j];
+%	return res;
+%}
+%template <size_t N, size_t M, size_t K, typename T>
+%constexpr Mat<N, K, T> operator* (const Mat<N, M, T> &a, const Mat<M, K, T> &b) {
+%	Mat<N, K, T> res {};
+%	REP(i, 0, N-1) REP(j, 0, M-1) REP(k, 0, K-1)
+%		res[i][k] += a[i][j] * b[j][k];
+%	return res;
+%}
+%\end{lstlisting}
+%
+%\subsection{(max, +)矩阵}
+%
+%\begin{lstlisting}
+%template <typename Ty>
+%constexpr void chmax(Ty &a, Ty b) {
+%	if (b > a) a = b;
+%}
+%template <size_t N, typename T = i64>
+%using Mat = array<array<T, N>, N>;
+%template <size_t N, typename T>
+%constexpr Mat<N, T> operator* (const Mat<N, T> &a, const Mat<N, T> &b) {
+%	Mat<N, T> res {};
+%	REP(i, 0, N-1) REP(k, 0, N-1) res[i][k] = -1e16;
+%	REP(i, 0, N-1) REP(j, 0, N-1) REP(k, 0, N-1)
+%		chmax(res[i][k], a[i][j] + b[j][k]);
+%	return res;
+%}
+%\end{lstlisting}
 
 \subsection{LCT}
 
@@ -1019,23 +997,6 @@ void cut(int x, int y) {
 		fa[y] = son[x][1] = 0;
 		update(x);
 	}
-}
-\end{lstlisting}
-
-\begin{lstlisting}
-if (ty == 0) {
-	split(x, y);
-	cout << sum[y] << "\n";
-}
-if (ty == 1) {
-	link(x, y);
-}
-if (ty == 2) {
-	cut(x, y);
-}
-if (ty == 3) {
-	splay(x);
-	val[x] = y;
 }
 \end{lstlisting}
 
@@ -1794,45 +1755,45 @@ u64 xorshift(u64 x) { x ^= x << 13; x ^= x >> 7; x ^= x << 17; return x; }
 u32 xorshift(u32 x) { x ^= x << 13; x ^= x >> 17; x ^= x << 5; return x; }
 \end{lstlisting}
 
-\subsection{质数表}
-
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-\hline
-2 & 3 & 5 & 7 & 11 & 13 & 17 & 19 & 23 & 29\\
-\hline
-31 & 37 & 41 & 43 & 47 & 53 & 59 & 61 & 67 & 71\\
-\hline
-73 & 79 & 83 & 89 & 97 & 101 & 103 & 107 & 109 & 113\\
-\hline
-127 & 131 & 137 & 139 & 149 & 151 & 157 & 163 & 167 & 173\\
-\hline
-179 & 181 & 191 & 193 & 197 & 199 & 211 & 223 & 227 & 229\\
-\hline
-233 & 239 & 241 & 251 & 257 & 263 & 269 & 271 & 277 & 281\\
-\hline
-283 & 293 & 307 & 311 & 313 & 317 & 331 & 337 & 347 & 349\\
-\hline
-353 & 359 & 367 & 373 & 379 & 383 & 389 & 397 & 401 & 409\\
-\hline
-419 & 421 & 431 & 433 & 439 & 443 & 449 & 457 & 461 & 463\\
-\hline
-467 & 479 & 487 & 491 & 499 & 503 & 509 & 521 & 523 & 541\\
-\hline
-547 & 557 & 563 & 569 & 571 & 577 & 587 & 593 & 599 & 601\\
-\hline
-607 & 613 & 617 & 619 & 631 & 641 & 643 & 647 & 653 & 659\\
-\hline
-661 & 673 & 677 & 683 & 691 & 701 & 709 & 719 & 727 & 733\\
-\hline
-739 & 743 & 751 & 757 & 761 & 769 & 773 & 787 & 797 & 809\\
-\hline
-811 & 821 & 823 & 827 & 829 & 839 & 853 & 857 & 859 & 863\\
-\hline
-877 & 881 & 883 & 887 & 907 & 911 & 919 & 929 & 937 & 941\\
-\hline
-947 & 953 & 967 & 971 & 977 & 983 & 991 & 997 & 1009 & 1013\\
-\hline
-\end{tabular}
+%\subsection{质数表}
+%
+%\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+%\hline
+%2 & 3 & 5 & 7 & 11 & 13 & 17 & 19 & 23 & 29\\
+%\hline
+%31 & 37 & 41 & 43 & 47 & 53 & 59 & 61 & 67 & 71\\
+%\hline
+%73 & 79 & 83 & 89 & 97 & 101 & 103 & 107 & 109 & 113\\
+%\hline
+%127 & 131 & 137 & 139 & 149 & 151 & 157 & 163 & 167 & 173\\
+%\hline
+%179 & 181 & 191 & 193 & 197 & 199 & 211 & 223 & 227 & 229\\
+%\hline
+%233 & 239 & 241 & 251 & 257 & 263 & 269 & 271 & 277 & 281\\
+%\hline
+%283 & 293 & 307 & 311 & 313 & 317 & 331 & 337 & 347 & 349\\
+%\hline
+%353 & 359 & 367 & 373 & 379 & 383 & 389 & 397 & 401 & 409\\
+%\hline
+%419 & 421 & 431 & 433 & 439 & 443 & 449 & 457 & 461 & 463\\
+%\hline
+%467 & 479 & 487 & 491 & 499 & 503 & 509 & 521 & 523 & 541\\
+%\hline
+%547 & 557 & 563 & 569 & 571 & 577 & 587 & 593 & 599 & 601\\
+%\hline
+%607 & 613 & 617 & 619 & 631 & 641 & 643 & 647 & 653 & 659\\
+%\hline
+%661 & 673 & 677 & 683 & 691 & 701 & 709 & 719 & 727 & 733\\
+%\hline
+%739 & 743 & 751 & 757 & 761 & 769 & 773 & 787 & 797 & 809\\
+%\hline
+%811 & 821 & 823 & 827 & 829 & 839 & 853 & 857 & 859 & 863\\
+%\hline
+%877 & 881 & 883 & 887 & 907 & 911 & 919 & 929 & 937 & 941\\
+%\hline
+%947 & 953 & 967 & 971 & 977 & 983 & 991 & 997 & 1009 & 1013\\
+%\hline
+%\end{tabular}
 
 
 %\subsection{}
