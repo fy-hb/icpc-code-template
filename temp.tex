@@ -246,7 +246,7 @@ inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
 \item $\mathrm{\phi}$ 函数：$\mathrm{\phi} (p ^ \alpha) = (p - 1) p ^ {\alpha - 1}$；
 \item $\mathrm{d}$ 函数（约数个数）：$\mathrm{d} (p ^ \alpha) = \alpha + 1$；
 \item $\mathrm{\sigma}_1$ 函数（约数和）：$\mathrm{\sigma}_1 (p ^ \alpha) = \sum_{i = 0}^{\alpha} p ^ i$；
-\item 【非积性/加性】$\Lambda$ 函数：$\Lambda (p ^ \alpha)$（$\alpha \geq 1$）为 $\log \alpha$，其余均为 $0$。
+\item 【非积性/加性】$\Lambda$ 函数：$\Lambda (p ^ \alpha)$（$\alpha \geq 1$）为 $\log p$，其余均为 $0$。
 \end{itemize}
 
 \subsection{Miller–Rabin}
