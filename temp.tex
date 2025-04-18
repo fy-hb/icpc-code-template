@@ -69,7 +69,7 @@
 	basicstyle=\small\ttfamily,             % 基本代码风格
 	columns=fixed,                          %
 	numbers=left,                           % 行号的位置在左边
-	numberstyle=\small\color{mygray},       % 行号的样式
+	numberstyle=\footnotesize\color{mygray},% 行号的样式
 	stepnumber=1,                           % 行号的步进值
 	numbersep=5pt,                          % 行号的距离
 %	backgroundcolor=\color{mybg},           % 代码块背景色
@@ -121,10 +121,10 @@
 	\fontsize{48pt}{\baselineskip}\selectfont  \textsc{\KWtitle}\\[8pt]
 	~\\[20pt]
 %		\includegraphics[scale=1]{./cover.jpg}
-	~\\[50pt]
+	~\\[70pt]
 	\huge \KWauthor\\[8pt]
 	\Large Last build at \today
-	~\\[100pt]
+	~\\[80pt]
 	\hrule\ \\[8pt]
 \end{center}
 \pagebreak
@@ -236,7 +236,7 @@ inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
 %}
 %\end{lstlisting}
 
-\subsection{常见积性函数}
+\subsection{常见数论函数}
 
 \begin{itemize}
 \item $\mathrm{\epsilon}$ 函数（单位函数）：$\mathrm{\epsilon} (p ^ \alpha) = 0$；
@@ -246,6 +246,7 @@ inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
 \item $\mathrm{\phi}$ 函数：$\mathrm{\phi} (p ^ \alpha) = (p - 1) p ^ {\alpha - 1}$；
 \item $\mathrm{d}$ 函数（约数个数）：$\mathrm{d} (p ^ \alpha) = \alpha + 1$；
 \item $\mathrm{\sigma}_1$ 函数（约数和）：$\mathrm{\sigma}_1 (p ^ \alpha) = \sum_{i = 0}^{\alpha} p ^ i$；
+\item 【非积性/加性】$\Lambda$ 函数：$\Lambda (p ^ \alpha)$（$\alpha \geq 1$）为 $\log \alpha$，其余均为 $0$。
 \end{itemize}
 
 \subsection{Miller–Rabin}
@@ -299,10 +300,7 @@ constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 		if (y & 1) ans = (u64) ans * x % m;
 	return ans;
 }
-struct Mint {
-	int val;
-	constexpr Mint(i64 x = 0) : val(Normal(x % mod)) {}
-};
+struct Mint { int val; constexpr Mint(i64 x = 0) : val(Normal(x % mod)) {} };
 constexpr Mint Pow(Mint a, i64 p) { return qpow(a.val, Normal(p, mod-1)); }
 constexpr Mint Inv(Mint a) { return Pow(a, -1); }
 constexpr Mint operator- (Mint a) { return mod-a.val; }
@@ -320,12 +318,12 @@ constexpr Mint operator++ (Mint &a, int) { auto b = a; return a += 1, b; }
 constexpr Mint operator-- (Mint &a, int) { auto b = a; return a -= 1, b; }
 template <typename S> S& operator<< (S &s, Mint a) { return s << a.val; }
 constexpr bool operator== (Mint a, Mint b) { return a.val == b.val; }
-constexpr Mint operator "" _M (unsigned long long x) { return x; }
+constexpr Mint operator "" _M (unsigned long long x) { return x % mod; }
 \end{lstlisting}
 
 \subsection{二次剩余}
 
-\begin{lstlisting}
+\begin{lstlisting}[]
 array<int, 2> res2(int n, int p) {
 	if (!n) return {0, 0};
 	if (qpow(n, p / 2, p) != 1) return {-1, -1};
@@ -333,9 +331,9 @@ array<int, 2> res2(int n, int p) {
 	do t = rnd() % p, ii = ((u64) t * t + p - n) % p;
 	while (qpow(ii, p / 2, p) != p - 1);
 	array<int, 2> ans = {1, 0}, x = {t, 1};
-	auto mul = [ii, p] (array<int, 2> x, array<int, 2> y) -> array<int, 2> {
-		return {int(((u64) x[0] * y[0] + (u64) x[1] * y[1] % p * ii) % p),
-					int(((u64) x[0] * y[1] + (u64) x[1] * y[0]) % p)}; };
+	auto mul = [&] (array<int,2> x, array<int,2> y)->array<int,2> {
+		return {int(((u64) x[0] * y[0] + (u64) x[1] * y[1] % p * ii)%p),
+				int(((u64) x[0] * y[1] + (u64) x[1] * y[0]) % p)}; };
 	for (int y = p / 2 + 1; y; y >>= 1, x = mul(x, x))
 		if (y & 1) ans = mul(ans, x);
 	return {min(ans[0], p - ans[0]), max(ans[0], p - ans[0])};
@@ -344,7 +342,7 @@ array<int, 2> res2(int n, int p) {
 
 \subsection{Poly}
 
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 constexpr int mod = 998'244'353;
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 	for (; y; y >>= 1, x = (u64) x * x % m)
@@ -464,14 +462,14 @@ P exp(const P &a) {
 
 \section{数学}
 
-\subsection{遍历所有素勾股数}
+\subsection{素勾股数}
 
 \begin{lstlisting}
-void gen(int a, int b, int c) { // a < b
+void gen(int a, int b, int c) {
     gen( a + 2*b + 2*c,  2*a + b + 2*c,  2*a + 2*b + 3*c);
     gen(-a + 2*b + 2*c, -2*a + b + 2*c, -2*a + 2*b + 3*c);
     gen( a - 2*b + 2*c,  2*a - b + 2*c,  2*a - 2*b + 3*c);
-} // 用法: gen(3, 4, 5);
+} // 用法: gen(3, 4, 5) 遍历所有 a < b 的素勾股数
 \end{lstlisting}
 
 \subsection{组合数}
@@ -480,11 +478,9 @@ void gen(int a, int b, int c) { // a < b
 int fac[N], inv[N];
 static inline void Init(i64 n) {
 	fac[0] = 1;
-	REP(i, 1, n)
-		fac[i] = (u64) fac[i-1] * i % mod;
+	REP(i, 1, n) fac[i] = (u64) fac[i-1] * i % mod;
 	inv[n] = qpow(fac[n], mod - 2);
-	REV(i, n, 1)
-		inv[i-1] = (u64) inv[i] * i % mod;
+	REV(i, n, 1) inv[i-1] = (u64) inv[i] * i % mod;
 }
 static inline i64 C(i64 x, i64 y) {
 	if (y > x || y < 0) return 0;
@@ -555,8 +551,7 @@ void dft(cp* a) {
 }
 void idft(cp* a) {
 	dft(a); reverse(a+1, a+lim);
-	for (int i = 0; i < lim; i ++)
-		a[i] /= lim;
+	for (int i = 0; i < lim; i ++) a[i] /= lim;
 }
 \end{lstlisting}
 
@@ -627,44 +622,44 @@ vector<int> work(const vector<pt> &p) {
 	st[++top] = ind[0];
 	REP(i, 0, n-1) {
 		while (top >= 1 && !check(p[st[top-1]], p[st[top]], p[ind[i]]))
-		vis[st[top]] = 0, top --;
+			vis[st[top]] = 0, top --;
 		st[++top] = ind[i]; vis[ind[i]] = 1;
 	}
 	int siz = top;
 	REV(i, n-2, 0) {
 		if (vis[ind[i]]) continue;
 		while (top > siz && !check(p[st[top-1]], p[st[top]], p[ind[i]]))
-		vis[st[top]] = 0, top --;
+			vis[st[top]] = 0, top --;
 		st[++top] = ind[i]; vis[ind[i]] = 1;
 	}
 	return st.resize(top), st;
 }
 \end{lstlisting}
 
-\section{字符串}
-
-\subsection{manacher}
-
-\begin{lstlisting}
-void manacher(int sz) {
-	int R = 0, mid = 0;
-	REP(i, 1, sz-1) {
-		p[i] = R > i ? min(p[2*mid-i], R-i) : 1;
-		while (s1[i+p[i]] == s1[i-p[i]]) p[i]++;
-		if (i + p[i] > R)
-		R = i + p[i], mid = i;
-	}
-}
-int is_pal(int l, int r) {
-	return p[l+r] > r - l;
-}
-/*
-0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M [index]
-  1   1   1   1   1   11  1   1   1   1   1
-^ . a . b . c . b . a . a . b . c . b . a . @
-    2   2   6   2   2   2   2   6   2   2
-*/
-\end{lstlisting}
+%\section{字符串}
+%
+%\subsection{manacher}
+%
+%\begin{lstlisting}
+%void manacher(int sz) {
+%	int R = 0, mid = 0;
+%	REP(i, 1, sz-1) {
+%		p[i] = R > i ? min(p[2*mid-i], R-i) : 1;
+%		while (s1[i+p[i]] == s1[i-p[i]]) p[i]++;
+%		if (i + p[i] > R)
+%		R = i + p[i], mid = i;
+%	}
+%}
+%int is_pal(int l, int r) {
+%	return p[l+r] > r - l;
+%}
+%/*
+%0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M [index]
+%  1   1   1   1   1   11  1   1   1   1   1
+%^ . a . b . c . b . a . a . b . c . b . a . @
+%    2   2   6   2   2   2   2   6   2   2
+%*/
+%\end{lstlisting}
 
 \section{数据结构}
 
@@ -684,61 +679,60 @@ i64 Query(i64 p, i64 ans = 0) { // 前缀求和
 
 \subsection{二维树状数组}
 
-\begin{lstlisting}
-struct T {
-	int tr[N][N];
-	void Add(int p, int q, int v) {
-		for (int x = p; x <= n; x += x&-x)
-		for (int y = q; y <= n; y += y&-y)
-		tr[x][y] += v;
-	}
-	int Query(int p, int q, int ans = 0) {
-		for (int x = p; x >= 1; x -= x&-x)
-		for (int y = q; y >= 1; y -= y&-y)
-		ans += tr[x][y];
-		return ans;
-	}
-} T, Tx, Txy, Ty;
-void Add(int x, int y, int v) {
-	T.Add(x, y, v);
-	Tx.Add(x, y, v * x);
-	Ty.Add(x, y, v * y);
-	Txy.Add(x, y, v * x * y);
-}
-int Query(int x, int y) {
-	return Txy.Query(x, y)
-	- Tx.Query(x, y) * (y + 1)
-	- Ty.Query(x, y) * (x + 1)
-	+ T.Query(x, y) * (x*y + x + y + 1);
-}
-// (a, b) ~ (c, d)
-void A(int a, int b, int c, int d, int v) {
-	c ++, d ++;
-	Add(c, d, v);
-	Add(a, b, v);
-	Add(a, d, -v);
-	Add(c, b, -v);
-}
-int Q(int a, int b, int c, int d) {
-	a --, b --;
-	return Query(c, d)
-	+ Query(a, b)
-	- Query(a, d)
-	- Query(c, b);
-}
-\end{lstlisting}
+维护四个二维普通树状数组 T0、T1、T2、T3：
 
-\subsection{树状数组select}
+\begin{itemize}
+\item 后缀 $(x, y) \sim \cdots$ 加 $v$：\texttt{T0.A(x, y, v), T1.A(x, y, v * x), T2.A(x, y, v * y), T3.A(x, y, v * x * y)}
+\item 前缀 $(1, 1) \sim (X, Y)$ 求和：\texttt{T3.Q(x, y) - T2.Q(x, y) * (x + 1) - T1.Q(x, y) * (y + 1) + T0.Q(x, y) * (x * y + x + y + 1)}
+\end{itemize}
+
+%\begin{lstlisting}
+%struct T {
+%	int tr[N][N];
+%	void Add(int p, int q, int v) {
+%		for (int x = p; x <= n; x += x&-x)
+%		for (int y = q; y <= n; y += y&-y)
+%		tr[x][y] += v;
+%	}
+%	int Query(int p, int q, int ans = 0) {
+%		for (int x = p; x >= 1; x -= x&-x)
+%		for (int y = q; y >= 1; y -= y&-y)
+%		ans += tr[x][y];
+%		return ans;
+%	}
+%} T, Tx, Txy, Ty;
+%void Add(int x, int y, int v) {
+%	T.Add(x, y, v);
+%	Tx.Add(x, y, v * x);
+%	Ty.Add(x, y, v * y);
+%	Txy.Add(x, y, v * x * y);
+%}
+%int Query(int x, int y) {
+%	return Txy.Query(x, y)
+%	- Tx.Query(x, y) * (y + 1)
+%	- Ty.Query(x, y) * (x + 1)
+%	+ T.Query(x, y) * (x*y + x + y + 1);
+%}
+%// (a, b) ~ (c, d)
+%void A(int a, int b, int c, int d, int v) {
+%	c ++, d ++;
+%	Add(c, d, v); Add(a, b, v); Add(a, d, -v); Add(c, b, -v);
+%}
+%int Q(int a, int b, int c, int d) {
+%	a --, b --;
+%	return Query(c, d) + Query(a, b) - Query(a, d) - Query(c, b);
+%}
+%\end{lstlisting}
+
+\subsection{树状数组二分}
 
 \begin{lstlisting}
 // 最后一个 前缀和 <= k 的位置
-int select(i64 k) {
-	int x = 0; i64 cur = 0;
-	for (int i = 1<<__lg(n); i; i /= 2) {
-		if (x + i <= n && cur + tree[x+i] <= k) {
+int select(int k) {
+	int x = 0, cur = 0;
+	for (int i = 1<<__lg(n); i; i /= 2)
+		if (x + i <= n && cur + tree[x+i] <= k)
 			x += i; cur = cur + tree[x];
-		}
-	}
 	return x;
 }
 \end{lstlisting}
@@ -751,29 +745,25 @@ Info operator+ (const Info &a, const Info &b) {}
 Info info[N<<2], init[N];
 #define ls(x) ((x)<<1)
 #define rs(x) ((x)<<1|1)
-inline void PushUp(int x) {
-	info[x] = info[ls(x)] + info[rs(x)];
-}
-void Build(int x, int l, int r) {
+inline void PushUp(int x) { info[x] = info[ls(x)] + info[rs(x)]; }
+inline void Build(int x, int l, int r) {
 	if (l >= r) return info[x] = init[l], void ();
-	int mid = (l+r) >> 1;
+	int mid = l + (r - l) / 2;
 	Build(ls(x), l, mid);
 	Build(rs(x), mid+1, r);
 	PushUp(x);
 }
-void Modify(int x, int l, int r, int pos, const Info &val) {
-	if (l == pos && pos == r) {
+inline void Modify(int x, int l, int r, int pos, const Info &val) {
+	if (l == pos && pos == r)
 		return info[x] = val, void ();
-	}
-	if (pos < l || pos > r) return;
-	int mid = (l+r) >> 1;
+	int mid = l + (r - l) / 2;
 	if (pos <= mid) Modify(ls(x), l, mid, pos, val);
 	if (pos > mid) Modify(rs(x), mid+1, r, pos, val);
 	PushUp(x);
 }
-Info Query(int x, int l, int r, int L, int R) {
+inline Info Query(int x, int l, int r, int L, int R) {
 	if (L <= l && r <= R) return info[x];
-	int mid = (l+r) >> 1;
+	int mid = l + (r - l) / 2;
 	if (R <= mid) return Query(ls(x), l, mid, L, R);
 	if (mid < L) return Query(rs(x), mid+1, r, L, R);
 	return Query(ls(x), l, mid, L, R) + Query(rs(x), mid+1, r, L, R);
@@ -802,39 +792,32 @@ inline void PushUp(int x) {
 inline void Apply(int x, const Tag &val) {
 	info[x].apply(val); tag[x].apply(val);
 }
-void PushDown(int x) {
-	Apply(ls(x), tag[x]);
-	Apply(rs(x), tag[x]);
-	tag[x] = Tag::Id();
+inline void PushDown(int x) {
+	Apply(ls(x), tag[x]); Apply(rs(x), tag[x]); tag[x] = Tag::Id();
 }
-void Build(int x, int l, int r) {
+inline void Build(int x, int l, int r) {
 	tag[x] = Tag::Id();
 	if (l >= r) return info[x] = init[l], void ();
-	int mid = (l+r) >> 1;
-	Build(ls(x), l, mid);
-	Build(rs(x), mid+1, r);
-	PushUp(x);
+	int mid = l + (r - l) / 2; Build(ls(x), l, mid);
+	Build(rs(x), mid+1, r); PushUp(x);
 }
-void Modify(int x, int l, int r, int pos, const Info &val) {
+inline void Modify(int x, int l, int r, int pos, const Info &val) {
 	if (l == pos && pos == r) return info[x] = val, void ();
-	int mid = (l+r) >> 1;
-	PushDown(x);
+	PushDown(x); int mid = l + (r - l) / 2;
 	if (pos <= mid) Modify(ls(x), l, mid, pos, val);
 	if (pos > mid) Modify(rs(x), mid+1, r, pos, val);
 	PushUp(x);
 }
-void Add(int x, int l, int r, int L, int R, const Tag &val) {
+inline void Add(int x, int l, int r, int L, int R, const Tag &val) {
 	if (L <= l && r <= R) return Apply(x, val), void ();
-	int mid = (l+r) >> 1;
-	PushDown(x);
+	PushDown(x); int mid = l + (r - l) / 2;
 	if (mid >= L) Add(ls(x), l, mid, L, R, val);
 	if (R > mid) Add(rs(x), mid+1, r, L, R, val);
 	PushUp(x);
 }
-Info Query(int x, int l, int r, int L, int R) {
+inline Info Query(int x, int l, int r, int L, int R) {
 	if (L <= l && r <= R) return info[x];
-	int mid = (l+r) >> 1;
-	PushDown(x);
+	PushDown(x); int mid = l + (r - l) / 2;
 	if (R <= mid) return Query(ls(x), l, mid, L, R);
 	if (mid < L) return Query(rs(x), mid+1, r, L, R);
 	return Query(ls(x), l, mid, L, R) + Query(rs(x), mid+1, r, L, R);
@@ -848,8 +831,8 @@ Info Query(int x, int l, int r, int L, int R) {
 \begin{lstlisting}
 int f[N+50][20], n;
 void Init() {
-	REP(i, 1, __lg(n)) REP(j, 1, n+1-(1<<i))
-		f[j][i]=gcd(f[j][i-1],f[j+(1<<(i-1))][i-1]);
+	REP(i, 1, __lg(n)) REP(j, 1, n-(1<<i)+1)
+		f[j][i] = gcd(f[j][i-1], f[j+(1<<(i-1))][i-1]);
 }
 int Get(int l, int r) {
 	int k = __lg(r-l+1);
@@ -860,7 +843,7 @@ int Get(int l, int r) {
 \subsection{FHQ \space Treap}
 
 \begin{lstlisting}
-struct hh{ int v, w, ls, rs; } tr[N]; // ...
+struct Tr { int v, w, ls, rs; } tr[N]; // ...
 void pushup(int u) {  } // ...
 int merge(int x, int y) {
 	if (!x || !y) return x ^ y;
@@ -948,8 +931,7 @@ void rotate(int x) { // 注意 x y z !!!!!
 	int y = fa[x], z = fa[y], b = get(x);
 	if (!is_root(y)) son[z][get(y)] = x;
 	son[y][b] = son[x][!b], son[x][!b] = y;
-	fa[son[y][b]] = y, fa[y] = x, fa[x] = z;
-	update(y);
+	fa[son[y][b]] = y, fa[y] = x, fa[x] = z; update(y);
 }
 void put(int x) {
 	if (x) rev[x] ^= 1, swap(son[x][0], son[x][1]);
@@ -963,8 +945,7 @@ void pushdown(int x) {
 }
 void splay(int x) {
 	for (pushdown(x); !is_root(x); rotate(x))
-		if (!is_root(fa[x]))
-			rotate(get(x)^get(fa[x]) ? x : fa[x]);
+		if (!is_root(fa[x])) rotate(get(x)^get(fa[x]) ? x : fa[x]);
 	update(x);
 }
 void access(int x) {
@@ -987,10 +968,8 @@ void link(int x, int y) {
 }
 void cut(int x, int y) {
 	mkroot(x);
-	if(find(y)==x && fa[y]==x && !son[y][0]){
-		fa[y] = son[x][1] = 0;
-		update(x);
-	}
+	if(find(y) == x && fa[y] == x && !son[y][0])
+		fa[y] = son[x][1] = 0, update(x);
 }
 \end{lstlisting}
 
@@ -1008,23 +987,17 @@ REP(k, 1, n) REP(x, 1, n) REP(y, 1, n)
 \begin{lstlisting}
 const i64 INF = 2e16L;
 struct Node { int to; i64 cap, flow; };
-vector<Node> e;
-vector<vector<int>> adj;
-vector<int> cur, dis;
-int n, s, t;
-void init(int nn, int ss = 0, int tt = 0) {
-	n = nn, s = ss, t = tt;
-	e.clear(); adj.assign(n+1, {});
+vector<Node> e; vector<int> cur, dis;
+vector<vector<int>> adj; int n;
+void init(int siz) {
+	n = siz; e.clear(); adj.assign(n+1, {});
 }
 void add(int u, int v, i64 w) {
-	adj[u].push_back(e.size());
-	e.push_back({v, w, 0});
-	adj[v].push_back(e.size());
-	e.push_back({u, 0, 0});
+	adj[u].push_back(e.size()); e.push_back({v, w, 0});
+	adj[v].push_back(e.size()); e.push_back({u, 0, 0});
 }
-int bfs() {
-	dis.assign(n+1, {});
-	cur.assign(n+1, {});
+int bfs(int s, int t) {
+	dis.assign(n+1, {}); cur.assign(n+1, {});
 	queue<int> Q;
 	for (Q.push(s), dis[s] = 1; Q.size(); ) {
 		int u = Q.front(); Q.pop();
@@ -1035,12 +1008,12 @@ int bfs() {
 	}
 	return dis[t];
 }
-i64 dfs(int u, i64 flow) {
+i64 dfs(int u, i64 flow, int t) {
 	if (u == t || !flow) return flow;
 	i64 tot = 0, res;
 	for (int &id = cur[u]; id < ssize(adj[u]); id ++) {
 		int i = adj[u][id];
-		if (dis[e[i].to] == dis[u] + 1 && (res = dfs(e[i].to, min(flow, e[i].cap - e[i].flow)))) {
+		if (dis[e[i].to] == dis[u] + 1 && (res = dfs(e[i].to, min(flow, e[i].cap - e[i].flow), t))) {
 			e[i].flow += res, e[i^1].flow -= res;
 			tot += res, flow -= res;
 			if (!flow) break;
@@ -1048,12 +1021,22 @@ i64 dfs(int u, i64 flow) {
 	}
 	return tot;
 }
-i64 Dinic() {
+i64 Dinic(int s, int t) {
 	i64 ans = 0;
-	for (; bfs(); ) ans += dfs(s, INF);
+	for (; bfs(s, t); ) ans += dfs(s, INF, t);
 	return ans;
 }
 \end{lstlisting}
+
+对于上下界最大流问题：
+
+\begin{itemize}
+\item 对于 $u \to u$，范围为 $[l, r]$ 的边：建边 $u \xrightarrow{r - l} v$，$tot[u]$ 减 $l$，$tot[v]$ 加 $l$。
+\item 对于所有 $tot[i] > 0$ 的点 $i$：建边 $s' \xrightarrow{tot[i]} i$ 且让 $sum$ 加上 $tot[i]$；
+\item 对于所有 $tot[i] < 0$ 的点 $i$：建边 $i \xrightarrow{-tot[i]} t'$。（注意这里 $i$ 都包括 $s$ 和 $t$）
+\item 建边 $t \xrightarrow{\inf} s$，然后跑 $s'$ 到 $t'$ 的最大流 $flow_1$，$flow_1 \neq sum$，则无解。
+\item 删除 $t \xrightarrow{\inf} s$ 的边，跑 $s$ 到 $t$ 的最大流 $flow_2$，$flow_1 + flow_2$ 就是答案。
+\end{itemize}
 
 \subsection{费用流 (EK)}
 
@@ -1061,67 +1044,47 @@ i64 Dinic() {
 const i64 INF = 1e16L;
 using pr = pair<i64, int>;
 struct Node { int to; i64 vol, flow, cost; };
-vector<vector<int>> adj;
-vector<int> from, vis;
-vector<Node> e;
-vector<i64> d, dis;
-int n, s, t; i64 F, C;
-void init(int nn, int ss, int tt) {
-	n = nn, s = ss, t = tt;
-	adj.assign(n+1, {});
-	e = {{}, {}};
-	from.assign(n+1, 0);
-	vis.assign(n+1, 0);
-	d.assign(n+1, 0);
-	dis.assign(n+1, 0);
+vector<vector<int>> adj; vector<int> from, vis;
+vector<Node> e; vector<i64> d, dis; i64 n, F, C;
+void init(int siz) {
+	n = siz; adj.assign(n+1, {}); e = {{}, {}};
+	from.assign(n+1, 0); vis.assign(n+1, 0);
+	d.assign(n+1, 0); dis.assign(n+1, 0);
 }
-void add(int x, int y, int v, int f) {
-	adj[x].push_back(e.size());
-	e.push_back({y, v, 0, f});
-	adj[y].push_back(e.size());
-	e.push_back({x, 0, 0, -f});
+void add(int x, int y, i64 f, i64 c) {
+	adj[x].push_back(e.size()); e.push_back({y, f, 0, c});
+	adj[y].push_back(e.size()); e.push_back({x, 0, 0, -c});
 }
-int spfa() {
-	queue<int> Q;
-	d.assign(n+1, INF);
+int spfa(int s, int t) {
+	queue<int> Q; d.assign(n+1, INF);
 	for (d[s] = 0, vis[s] = 1, Q.push(s); Q.size(); ) {
 		auto x = Q.front(); Q.pop(); vis[x] = 0;
-		for (auto i : adj[x]) {
+		for (auto i : adj[x])
 			if (e[i].vol - e[i].flow && d[e[i].to] > d[x] + e[i].cost) {
-				d[e[i].to] = d[x] + e[i].cost;
-				from[e[i].to] = i;
+				d[e[i].to] = d[x] + e[i].cost; from[e[i].to] = i;
 				if (!vis[e[i].to]) vis[e[i].to] = 1, Q.push(e[i].to);
 			}
-		}
 	}
 	return d[t] < INF;
-}
-int dij() {
+} 
+int dij(int s, int t) {
 	priority_queue<pr, vector<pr>, greater<pr>> Q;
-	dis.swap(d);
-	d.assign(n+1, INF);
-	vis.assign(n+1, 0);
-	from.assign(n+1, 0);
+	dis.swap(d); d.assign(n+1, INF);
+	vis.assign(n+1, 0); from.assign(n+1, 0);
 	for (Q.emplace(d[s] = 0, s); Q.size(); ) {
 		auto x = Q.top().second; Q.pop();
-		if (vis[x]) continue;
-		vis[x] = 1;
+		if (vis[x]) continue; vis[x] = 1;
 		for (auto i : adj[x]) {
 			const i64 v = e[i].cost + dis[x] - dis[e[i].to];
-			if (e[i].vol - e[i].flow && d[e[i].to] > d[x] + v) {
-				from[e[i].to] = i;
-				Q.emplace(d[e[i].to] = d[x] + v, e[i].to);
-			}
+			if (e[i].vol - e[i].flow && d[e[i].to] > d[x] + v)
+				from[e[i].to] = i, Q.emplace(d[e[i].to] = d[x]+v, e[i].to);
 		}
 	}
-	for (int i = 0; i <= n; i ++) d[i] += dis[i];
-	return d[t] < INF;
+	for (int i = 0; i <= n; i ++) d[i] += dis[i]; return d[t] < INF;
 }
-array<i64, 2> EK() {
-	spfa();
-	F = C = 0;
-	for (; dij(); ) {
-		i64 fl = INF;
+array<i64, 2> EK(int s, int t) {
+	spfa(s, t); i64 F = 0, C = 0, fl;
+	for (; fl = INF, dij(s, t); ) {
 		for (int i = from[t]; i; i = from[e[i^1].to])
 			fl = min<i64> (e[i].vol - e[i].flow, fl);
 		for (int i = from[t]; i; i = from[e[i^1].to])
@@ -1132,29 +1095,24 @@ array<i64, 2> EK() {
 }
 \end{lstlisting}
 
+对于有负边的费用流问题，先按照上下界的方式让负边满流。
+
+注意费用来源于三个部分（负边满流、$s'$ 到 $t'$ 可行流的费用、$s$ 到 $t$ 的费用）
+
 \subsection{tarjan(强联通分量)}
 
 \begin{lstlisting}
 int dfn[N], low[N], bel[N], st[N], top, cnt, tms;
 vector<int> adj[N], scc[N];
 void tarjan(int u) {
-	dfn[u] = low[u] = ++tms;
-	st[++top] = u;
+	dfn[u] = low[u] = ++tms, st[++top] = u;
 	for (auto v : adj[u]) {
-		if (!dfn[v]) {
-			tarjan(v);
-			chmin(low[u], low[v]);
-		}
-		else if (!bel[v]) {
-			chmin(low[u], dfn[v]);
-		}
+		if (!dfn[v]) tarjan(v), chmin(low[u], low[v]);
+		else if (!bel[v]) chmin(low[u], dfn[v]);
 	}
 	if (low[u] == dfn[u]) {
 		int z; cnt ++;
-		do {
-			z = st[top--]; bel[z] = cnt;
-			scc[cnt].push_back(z);
-		}
+		do z = st[top--], bel[z] = cnt, scc[cnt].push_back(z);
 		while (z != u);
 	}
 }
@@ -1163,32 +1121,18 @@ void tarjan(int u) {
 \subsection{tarjan(边双)}
 
 \begin{lstlisting}
-const int N = 5e5L+10;
-// to, ind
-vector<array<int, 2>> adj[N];
 vector<int> bcc[N];
 int dfn[N], low[N], st[N], bel[N], top, n, m, cnt, tt;
 void tarjan(int u, int in) {
-	low[u] = dfn[u] = ++tt;
-	st[++top] = u;
+	low[u] = dfn[u] = ++tt, st[++top] = u;
 	for (auto [v, id] : adj[u]) {
 		if (id == in) continue;
-		if (!dfn[v]) {
-			tarjan(v, id);
-			chmin(low[u], low[v]);
-		}
-		else {
-			chmin(low[u], dfn[v]);
-		}
+		if (!dfn[v]) tarjan(v, id); chmin(low[u], low[v]);
+		else chmin(low[u], dfn[v]);
 	}
 	if (dfn[u] == low[u]) {
-		cnt ++;
-		int z;
-		do {
-			z = st[top--];
-			bcc[cnt].push_back(z);
-			bel[z] = cnt;
-		}
+		int z; cnt ++;
+		do z = st[top--], bcc[cnt].push_back(z), bel[z] = cnt;
 		while (z != u);
 	}
 }
@@ -1197,33 +1141,24 @@ void tarjan(int u, int in) {
 \subsection{tarjan(点双)}
 
 \begin{lstlisting}
-int dfn[N], low[N], st[N], bel[N], cut[N], top, tms, cnt;
+int dfn[N], low[N], st[N], cut[N], top, tms, cnt;
 vector<int> adj[N], bcc[N];
 void tarjan(int u, int fa) {
-	dfn[u] = low[u] = ++tms;
-	st[++top] = u;
-	int ch = 0;
+	dfn[u] = low[u] = ++tms, st[++top] = u; int ch = 0;
 	for (auto v : adj[u]) {
 		if (!dfn[v]) {
-			tarjan(v, u);
-			chmin(low[u], low[v]);
+			tarjan(v, u), chmin(low[u], low[v]);
 			if (low[v] >= dfn[u]) {
 				if (++ch > 1 && fa) cut[u] = 1;
 				int z; cnt ++;
-				do {
-					z = st[top--];
-					bel[z] = cnt;
-					bcc[cnt].push_back(z);
-				}
+				do z = st[top--], bcc[cnt].push_back(z);
 				while (z != v);
 				bcc[cnt].push_back(u);
 			}
 		}
 		else chmin(low[u], dfn[v]);
 	}
-	if (!fa && !ch) {
-		bcc[++cnt] = {u}; // 特判独立点
-	}
+	if (!fa && !ch) bcc[++cnt] = {u}; // 特判独立点
 }
 \end{lstlisting}
 
@@ -1276,12 +1211,9 @@ i64 floorDiv(i64 n, i64 m) { // m > 0
 #include <sys/stat.h>
 #include <fcntl.h>
 
-// int fd = open("*.in", O_RDONLY);
-int fd = 0; // stdin
-struct stat state;
-fstat(fd, &state);
-int len = state.st_size;
-char* addr = (char *) mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
+int fd = 0; // 0 为 stdin  // int fd = open("*.in", O_RDONLY);
+struct stat state; fstat(fd, &state); int len = state.st_size;
+char* addr = (char*) mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
 \end{lstlisting}
 
 \subsection{read()}
@@ -1656,76 +1588,102 @@ static void qs(int l, int r) {
 
 \subsection{火车头精简版}
 
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,avx512")
 #pragma GCC optimize("inline")
-#pragma pack(1)
 \end{lstlisting}
 
-\subsection{导数积分}
-
-\textbf{
-\small\bfseries
-\begin{align*}
-\left(\frac{u}{v}\right)' &= \frac{u'v-uv'}{v^2}  &  (\arctan (x))' &= \frac{1}{1+x^2}                    & (\mathrm{arcsinh} (x))' &= \frac{1}{\sqrt{1+x^2}}               \\
-(a^x)' &= (\ln a)a^x                              &  (\mathrm{arccot} (x))' &= -\frac{1}{1+x^2}           & (\mathrm{arccosh} (x))' &= \frac{1}{\sqrt{x^2-1}}               \\
-(\tan (x))' &= \sec^2 (x)                         &  (\mathrm{arcsec} (x))' &= \frac{1}{|x|\sqrt{x^2-1}}  & (\mathrm{arctanh} (x))' &= \frac{1}{1-x^2}                      \\
-(\cot (x))' &= -\csc^2 (x)                        &  (\mathrm{arccsc} (x))' &= -\frac{1}{|x|\sqrt{x^2-1}} & (\mathrm{arccoth} (x))' &= \frac{1}{1-x^2}                      \\
-(\sec (x))' &= \tan (x) \sec (x)                  &  (\tanh (x))' &= \mathrm{sech}^2 (x)                  & (\mathrm{arcsech} (x))' &= -\frac{1}{x\sqrt{1-x^2}}             \\
-(\csc (x))' &= -\cot (x) \csc (x)                 &  (\coth (x))' &= -\mathrm{csch}^2 (x)                 & (\mathrm{arccsch} (x))' &= -\frac{1}{|x|\sqrt{1+x^2}}           \\
-(\arcsin (x))' &= \frac{1}{\sqrt{1-x^2}}          &  (\mathrm{sech} (x))' &= -\mathrm{sech} (x) \tanh (x) &                         &                                       \\
-(\arccos (x))' &= -\frac{1}{\sqrt{1-x^2}}         &  (\mathrm{csch} (x))' &= -\mathrm{csch} (x) \coth (x) &                         &                                       \\
-\end{align*}
-}
-
-{
-\Large
-$ax^2 + bx + c(a > 0)$
-
-\Large
-$$ \int\frac{dx}{ax^2+bx+c} = \begin{cases}
-	\frac{2}{\sqrt{4ac-b^2}}\arctan\frac{2ax+b}{\sqrt{4ac-b^2}}+C & (b^2 < 4ac) \\
-	\frac{1}{\sqrt{b^2-4ac}}\ln\left|\frac{2ax+b-\sqrt{b^2-4ac}}{2ax+b+\sqrt{b^2-4ac}}\right|+C & (b^2 > 4ac)
-\end{cases} $$
-
-$$ \int\frac{x}{ax^2+bx+c}dx = \frac{1}{2a}\ln|ax^2+bx+c|-\frac{b}{2a}\int\frac{dx}{ax^2+bx+c} $$
-
-}
-
+%\subsection{导数积分}
+%
+%\textbf{
+%\small\bfseries
+%\begin{align*}
+%\left(\frac{u}{v}\right)' &= \frac{u'v-uv'}{v^2}  &  (\arctan (x))' &= \frac{1}{1+x^2}                    & (\mathrm{arcsinh} (x))' &= \frac{1}{\sqrt{1+x^2}}               \\
+%(a^x)' &= (\ln a)a^x                              &  (\mathrm{arccot} (x))' &= -\frac{1}{1+x^2}           & (\mathrm{arccosh} (x))' &= \frac{1}{\sqrt{x^2-1}}               \\
+%(\tan (x))' &= \sec^2 (x)                         &  (\mathrm{arcsec} (x))' &= \frac{1}{|x|\sqrt{x^2-1}}  & (\mathrm{arctanh} (x))' &= \frac{1}{1-x^2}                      \\
+%(\cot (x))' &= -\csc^2 (x)                        &  (\mathrm{arccsc} (x))' &= -\frac{1}{|x|\sqrt{x^2-1}} & (\mathrm{arccoth} (x))' &= \frac{1}{1-x^2}                      \\
+%(\sec (x))' &= \tan (x) \sec (x)                  &  (\tanh (x))' &= \mathrm{sech}^2 (x)                  & (\mathrm{arcsech} (x))' &= -\frac{1}{x\sqrt{1-x^2}}             \\
+%(\csc (x))' &= -\cot (x) \csc (x)                 &  (\coth (x))' &= -\mathrm{csch}^2 (x)                 & (\mathrm{arccsch} (x))' &= -\frac{1}{|x|\sqrt{1+x^2}}           \\
+%(\arcsin (x))' &= \frac{1}{\sqrt{1-x^2}}          &  (\mathrm{sech} (x))' &= -\mathrm{sech} (x) \tanh (x) &                         &                                       \\
+%(\arccos (x))' &= -\frac{1}{\sqrt{1-x^2}}         &  (\mathrm{csch} (x))' &= -\mathrm{csch} (x) \coth (x) &                         &                                       \\
+%\end{align*}
+%}
+%
+%{
+%\Large
+%$ax^2 + bx + c(a > 0)$
+%
+%\Large
+%$$ \int\frac{dx}{ax^2+bx+c} = \begin{cases}
+%	\frac{2}{\sqrt{4ac-b^2}}\arctan\frac{2ax+b}{\sqrt{4ac-b^2}}+C & (b^2 < 4ac) \\
+%	\frac{1}{\sqrt{b^2-4ac}}\ln\left|\frac{2ax+b-\sqrt{b^2-4ac}}{2ax+b+\sqrt{b^2-4ac}}\right|+C & (b^2 > 4ac)
+%\end{cases} $$
+%
+%$$ \int\frac{x}{ax^2+bx+c}dx = \frac{1}{2a}\ln|ax^2+bx+c|-\frac{b}{2a}\int\frac{dx}{ax^2+bx+c} $$
+%
+%}
+%
 \subsection{STL 积分/求和}
 
-{
-\Large
-$$ \int_0^1 t^{x-1}(1-t)^{y-1}\,dt = \mathrm{beta}(x,y) = \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)} $$
+$$
+\int_0^1 t^{x-1}(1-t)^{y-1}\,dt = \mathrm{beta}(x,y) = \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)}
+$$
 
-$$ \int_0^{+\infty} t^{num-1}e^{-t}\,dt = \mathrm{tgamma}(num) = e^{\mathrm{lgamma}(num)}$$
+$$
+\int_0^{+\infty} t^{num-1}e^{-t}\,dt = \mathrm{tgamma}(num) = e^{\mathrm{lgamma}(num)}
+$$
 
-$$ \int_0^{phi} \frac{d\theta}{\sqrt{1-k^2\sin^2\theta}} = \mathrm{ellint\_1}(k,phi) $$
+$$
+\int_0^{phi} \frac{d\theta}{\sqrt{1-k^2\sin^2\theta}} = \mathrm{ellint\_1}(k,phi)
+$$
 
-$$ \int_0^{phi} \sqrt{1-k^2\sin^2\theta}\,d\theta = \mathrm{ellint\_2}(k,phi) $$
+$$
+\int_0^{phi} \sqrt{1-k^2\sin^2\theta}\,d\theta = \mathrm{ellint\_2}(k,phi)
+$$
 
-$$ \int_{num}^{+\infty} \frac{e^{-t}}{t}\,dt = -\mathrm{expint}(-num) $$
+$$
+\int_{num}^{+\infty} \frac{e^{-t}}{t}\,dt = -\mathrm{expint}(-num)
+$$
 
-$$ \sum_{n=1}^{+\infty} n^{-num} = \mathrm{riemann\_zeta}(num) $$
+$$
+\sum_{n=1}^{+\infty} n^{-num} = \mathrm{riemann\_zeta}(num)
+$$
 
-$$ \frac{2}{\sqrt{\pi}}\int_0^{arg} e^{-t^2}\,dt = \mathrm{erf}(arg) $$
+$$
+\frac{2}{\sqrt{\pi}}\int_0^{arg} e^{-t^2}\,dt = \mathrm{erf}(arg)
+$$
 
-$$ J_{\alpha} (x) = \sum_{m = 0}^{\infty} \frac{(-1)^m}{m ! \Gamma (m + \alpha + 1)} \left(\frac{x}{2}\right) ^ {(2 m + \alpha)} = \mathrm{jn} (\alpha, x) $$
-
-$$ Y_{\alpha} (x) = \frac{J_{\alpha} (x) \cos (\alpha \pi) - J_{ - \alpha} (x)}{\sin (\alpha \pi)} = \mathrm{yn} (\alpha, x) $$
-
-}
+%$$
+%J_{\alpha} (x) = \sum_{m = 0}^{\infty} \frac{(-1)^m}{m ! \Gamma (m + \alpha + 1)} \left(\frac{x}{2}\right) ^ {(2 m + \alpha)} = \mathrm{jn} (\alpha, x)
+%$$
+%
+%$$
+%Y_{\alpha} (x) = \frac{J_{\alpha} (x) \cos (\alpha \pi) - J_{ - \alpha} (x)}{\sin (\alpha \pi)} = \mathrm{yn} (\alpha, x)
+%$$
 
 \subsection{其他公式}
 
-{
-\Large
-$$ d(i \cdot j) = \sum_{x | i} \sum_{y | j} [\gcd (x, y) = 1] = \sum_{p \mid \gcd (i, j)} \mu (p) \cdot d (\frac{i}{p}) \cdot d (\frac{j}{p}) $$
+%$$ d(i \cdot j) = \sum_{x | i} \sum_{y | j} [\gcd (x, y) = 1] = \sum_{p \mid \gcd (i, j)} \mu (p) \cdot d (\frac{i}{p}) \cdot d (\frac{j}{p}) $$
 
-$$ \epsilon (x) = \sum \limits_{d \mid x} \mu (d) $$
-}
+$$
+d(i \cdot j) = \sum_{p \mid i, p \mid j} \mu (p) \cdot d (\frac{i}{p}) \cdot d (\frac{j}{p})
+\qquad
+\epsilon (x) = \sum \limits_{d \mid x} \mu (d)
+$$
+
+$$
+\mathrm{I} * \mathrm{I} = \mathrm{d}
+\quad
+\mathrm{\varphi} * \mathrm{I} = \mathrm{Id}
+\quad
+\Lambda * \mathrm{I} = \log
+\quad
+\mathrm{Id}_k * \mathrm{I} = \mathrm{\sigma}_k
+\quad
+\mathrm{\mu} * \mathrm{I} = \mathrm{\epsilon}
+$$
 
 $$
 f * g = h \implies g(1) * S(n) = \sum_{i = 1}^{n} h(i) - \sum_{i = 2}^{n} g(i) S(\left \lfloor \frac{n}{i} \right \rfloor)
@@ -1737,11 +1695,19 @@ $$
 
 \subsection{bashrc}
 
-\begin{lstlisting}
+\begin{lstlisting}[language=sh]
 mk() { local F="$1" ; shift ; g++ "$F.cpp" -o "$F" "$@"; }
 ulimit -s 1048576
 ulimit -v 1048576
 \end{lstlisting}
+
+\subsection{编译参数}
+
+\begin{itemize}
+\item \texttt{-fsanitize=address,undefined,leak,memory -ftrapv}：检测内存错误、UB、内存泄漏、未初始化内存访问、有符号溢出检查。
+\item \texttt{-Wall -Wextra -Wshadow -Wconversion -Wsign-conversion}：常见警告，变量 shadow、隐式类型转换、有符号/无符号转换。
+\item \texttt{-D\_GLIBCXX\_DEBUG}：STL debug。
+\end{itemize}
 
 \subsection{Xor \space Shift}
 
@@ -1757,7 +1723,7 @@ from decimal import Decimal, getcontext, localcontext
 getcontext().prec = 1000 # 全局环境 精度为 1000
 with localcontext() as ctx:
 	ctx.prec = 1000 # 临时环境
-a = Decimal(``1.14514'') # a.sqrt(), a.ln(), a.exp(), ...
+a = Decimal("1.14514") # a.sqrt(), a.ln(), a.exp(), ...
 \end{lstlisting}
 
 \subsection{python Fractions}
