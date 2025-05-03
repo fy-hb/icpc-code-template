@@ -759,32 +759,28 @@ int select(int k) {
 struct Info { };
 Info operator+ (const Info &a, const Info &b) {}
 Info info[N<<2], init[N];
-#define ls(x) ((x)<<1)
-#define rs(x) ((x)<<1|1)
-inline void PushUp(int x) { info[x] = info[ls(x)] + info[rs(x)]; }
+inline void PushUp(int x) { info[x] = info[x<<1] + info[x<<1|1]; }
 inline void Build(int x, int l, int r) {
 	if (l >= r) return info[x] = init[l], void ();
 	int mid = l + (r - l) / 2;
-	Build(ls(x), l, mid);
-	Build(rs(x), mid+1, r);
+	Build(x<<1, l, mid);
+	Build(x<<1|1, mid+1, r);
 	PushUp(x);
 }
 inline void Modify(int x, int l, int r, int pos, const Info &val) {
 	if (l == pos && pos == r) return info[x] = val, void ();
 	int mid = l + (r - l) / 2;
-	if (pos <= mid) Modify(ls(x), l, mid, pos, val);
-	if (pos > mid) Modify(rs(x), mid+1, r, pos, val);
+	if (pos <= mid) Modify(x<<1, l, mid, pos, val);
+	if (pos > mid) Modify(x<<1|1, mid+1, r, pos, val);
 	PushUp(x);
 }
 inline Info Query(int x, int l, int r, int L, int R) {
 	if (L <= l && r <= R) return info[x];
 	int mid = l + (r - l) / 2;
-	if (R <= mid) return Query(ls(x), l, mid, L, R);
-	if (mid < L) return Query(rs(x), mid+1, r, L, R);
-	return Query(ls(x), l, mid, L, R) + Query(rs(x), mid+1, r, L, R);
+	if (R <= mid) return Query(x<<1, l, mid, L, R);
+	if (mid < L) return Query(x<<1|1, mid+1, r, L, R);
+	return Query(x<<1, l, mid, L, R) + Query(x<<1|1, mid+1, r, L, R);
 }
-#undef ls
-#undef rs
 \end{lstlisting}
 
 \subsection{区间修改懒标记线段树}
@@ -799,46 +795,42 @@ struct Info {
 };
 Info operator+ (const Info &a, const Info &b) {}
 Info info[N<<2], init[N]; Tag tag[N<<2];
-#define ls(x) ((x)<<1)
-#define rs(x) ((x)<<1|1)
 inline void PushUp(int x) {
-	info[x] = info[ls(x)] + info[rs(x)];
+	info[x] = info[x<<1] + info[x<<1|1];
 }
 inline void Apply(int x, const Tag &val) {
 	info[x].apply(val); tag[x].apply(val);
 }
 inline void PushDown(int x) {
-	Apply(ls(x), tag[x]); Apply(rs(x), tag[x]); tag[x] = Tag::Id();
+	Apply(x<<1, tag[x]); Apply(x<<1|1, tag[x]); tag[x] = Tag::Id();
 }
 inline void Build(int x, int l, int r) {
 	tag[x] = Tag::Id();
 	if (l >= r) return info[x] = init[l], void ();
-	int mid = l + (r - l) / 2; Build(ls(x), l, mid);
-	Build(rs(x), mid+1, r); PushUp(x);
+	int mid = l + (r - l) / 2; Build(x<<1, l, mid);
+	Build(x<<1|1, mid+1, r); PushUp(x);
 }
 inline void Modify(int x, int l, int r, int pos, const Info &val) {
 	if (l == pos && pos == r) return info[x] = val, void ();
 	PushDown(x); int mid = l + (r - l) / 2;
-	if (pos <= mid) Modify(ls(x), l, mid, pos, val);
-	if (pos > mid) Modify(rs(x), mid+1, r, pos, val);
+	if (pos <= mid) Modify(x<<1, l, mid, pos, val);
+	if (pos > mid) Modify(x<<1|1, mid+1, r, pos, val);
 	PushUp(x);
 }
 inline void Add(int x, int l, int r, int L, int R, const Tag &val) {
 	if (L <= l && r <= R) return Apply(x, val), void ();
 	PushDown(x); int mid = l + (r - l) / 2;
-	if (mid >= L) Add(ls(x), l, mid, L, R, val);
-	if (R > mid) Add(rs(x), mid+1, r, L, R, val);
+	if (mid >= L) Add(x<<1, l, mid, L, R, val);
+	if (R > mid) Add(x<<1|1, mid+1, r, L, R, val);
 	PushUp(x);
 }
 inline Info Query(int x, int l, int r, int L, int R) {
 	if (L <= l && r <= R) return info[x];
 	PushDown(x); int mid = l + (r - l) / 2;
-	if (R <= mid) return Query(ls(x), l, mid, L, R);
-	if (mid < L) return Query(rs(x), mid+1, r, L, R);
-	return Query(ls(x), l, mid, L, R) + Query(rs(x), mid+1, r, L, R);
+	if (R <= mid) return Query(x<<1, l, mid, L, R);
+	if (mid < L) return Query(x<<1|1, mid+1, r, L, R);
+	return Query(x<<1, l, mid, L, R) + Query(x<<1|1, mid+1, r, L, R);
 }
-#undef ls
-#undef rs
 \end{lstlisting}
 
 \subsection{ST表}
@@ -859,17 +851,26 @@ int Get(int l, int r) {
 
 \begin{lstlisting}
 struct Tr { int v, w, ls, rs; } tr[N]; // ...
-void pushup(int u) {  } // ...
+inline void pushup(int u) {  } // ...
+inline void pushdown(int u) {  } // ...
 int merge(int x, int y) {
 	if (!x || !y) return x ^ y;
-	if (tr[x].w > tr[y].w)  // 有标记先 pushdown(x);
-		return tr[x].rs = merge(tr[x].rs, y), pushup(x), x;
-	return tr[y].ls = merge(x,tr[y].ls), pushup(y), y; // pushdown(y);
+	if (tr[x].w > tr[y].w)
+		return pushdown(x), tr[x].rs = merge(tr[x].rs, y), pushup(x), x;
+	return pushdown(y), tr[y].ls = merge(x,tr[y].ls), pushup(y), y;
 }
-void split(int u, int v, int &x, int &y) { // <= w | > w
-	if (!u) return x = y = 0, void(); // pushdown(u);
+void split(int u, int v, int &x, int &y) { // 按值: <= w | > w
+	if (!u) return x = y = 0, void();
+	pushdown(u);
 	if (tr[u].v <= v) x = u, split(tr[u].rs, v, tr[u].rs, y);
 	else y = u, split(tr[u].ls, v, x, tr[u].ls);
+	pushup(u);
+}
+void split(int u, int siz, int &x, int &y) { // 按大小: siz | n-siz
+	if (!u) return x = y = 0, void();
+	pushdown(u);
+	if (tr[tr[u].ls].siz + 1 > siz) y = u, split(tr[u].ls, siz, x, tr[u].ls);
+	else x = u, split(tr[u].rs, siz - tr[tr[u].ls].siz - 1, tr[u].rs, y);
 	pushup(u);
 }
 \end{lstlisting}
