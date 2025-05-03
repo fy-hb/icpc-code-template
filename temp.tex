@@ -66,7 +66,7 @@
 % 代码样式设置
 \lstset{
 	language=C++,                           % 设置语言
-	basicstyle=\small\ttfamily,             % 基本代码风格
+	basicstyle=\footnotesize\ttfamily,      % 基本代码风格
 	columns=fixed,                          %
 	numbers=left,                           % 行号的位置在左边
 	numberstyle=\footnotesize\color{mygray},% 行号的样式
@@ -153,16 +153,16 @@
 
 \subsection{ExGcd}
 
-\begin{lstlisting}[]
-// result : -b < x < b AND -a < y <= a when a,b != 0
-i64 exgcd(i64 a, i64 b, i64 &x, i64 &y) {
-	if (b == 0) { x = 1, y = 0; return a; }
-	i64 d = exgcd(b, a % b, y, x);
-	y -= a / b * x; return d;
-}
-\end{lstlisting}
+% \begin{lstlisting}[]
+% i64 exgcd(i64 a, i64 b, i64 &x, i64 &y) {
+% 	if (b == 0) { x = 1, y = 0; return a; }
+% 	i64 d = exgcd(b, a % b, y, x);
+% 	y -= a / b * x; return d;
+% }
+% \end{lstlisting}
 
 \begin{lstlisting}[]
+// result : -b < x < b AND -a < y <= a when a,b != 0
 array<int, 3> exgcd(int a, int b) {
 	if (!b) return {a, 1, 0};
 	auto [d, x, y] = exgcd(b, a % b);
@@ -193,47 +193,50 @@ inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
 
 %\subsection{线性筛}
 %
+%标记 \texttt{vis} 了吗？该 \texttt{break} 的地方 \texttt{break} 了吗？
+
+%
 %\begin{lstlisting}[]
-%const int N = 1e5+10;
-%bitset<N> vis;
-%vector<int> primes;
-%// Mobius函数, 欧拉函数
-%int mu[N], phi[N];
-%// 约数个数, 最小质因子数量
-%int d[N], num[N];
-%// 约数和, 最小质因子的p^0+p^1+...+p^k
-%int f[N], g[N];
-%static inline void Init(int n) {
-%	vis[1] = 1;
-%	mu[1] = 1;
-%	phi[1] = 1;
-%	d[1] = 1, num[1] = 0;
-%	g[1] = f[1] = 1;
-%	for (int i = 2; i <= n; i ++) {
-%		if (!vis[i]) {
-%			primes.push_back(i);
-%			mu[i] = -1;
-%			phi[i] = i-1;
-%			num[i] = 1, d[i] = 2;
-%			g[1] = f[1] = i+1;
-%		}
-%		for (auto j : primes) {
-%			if (i*j > n) break;
-%			vis[i*j] = 1;
-%			mu[i*j] = -mu[i];
-%			phi[i*j] = phi[i]*phi[j];
-%			num[i*j] = 1, d[i*j] = d[i]<<1;
-%			g[i*j] = j+1, f[i*j] = f[i]*f[j];
-%			if (i%j == 0) {
-%				mu[i*j] = 0;
-%				phi[i*j] = phi[i]*j;
-%				num[i*j] = num[i]+1, d[i*j] = d[i] / (num[i]+1) * (num[i]+2);
-%				g[i*j] = g[i]*j+1, f[i*j] = f[i] / g[i] * g[i*j];
-%				break;
-%			}
-%		}
-%	}
-%}
+% const int N = 1e5+10;
+% bitset<N> vis;
+% vector<int> primes;
+% // Mobius函数, 欧拉函数
+% int mu[N], phi[N];
+% // 约数个数, 最小质因子数量
+% int d[N], num[N];
+% // 约数和, 最小质因子的p^0+p^1+...+p^k
+% int f[N], g[N];
+% static inline void Init(int n) {
+% 	vis[1] = 1;
+% 	mu[1] = 1;
+% 	phi[1] = 1;
+% 	d[1] = 1, num[1] = 0;
+% 	g[1] = f[1] = 1;
+% 	for (int i = 2; i <= n; i ++) {
+% 		if (!vis[i]) {
+% 			primes.push_back(i);
+% 			mu[i] = -1;
+% 			phi[i] = i-1;
+% 			num[i] = 1, d[i] = 2;
+% 			g[1] = f[1] = i+1;
+% 		}
+% 		for (auto j : primes) {
+% 			if (i*j > n) break;
+% 			vis[i*j] = 1;
+% 			mu[i*j] = -mu[i];
+% 			phi[i*j] = phi[i]*phi[j];
+% 			num[i*j] = 1, d[i*j] = d[i]<<1;
+% 			g[i*j] = j+1, f[i*j] = f[i]*f[j];
+% 			if (i%j == 0) {
+% 				mu[i*j] = 0;
+% 				phi[i*j] = phi[i]*j;
+% 				num[i*j] = num[i]+1, d[i*j] = d[i] / (num[i]+1) * (num[i]+2);
+% 				g[i*j] = g[i]*j+1, f[i*j] = f[i] / g[i] * g[i*j];
+% 				break;
+% 			}
+% 		}
+% 	}
+% }
 %\end{lstlisting}
 
 \subsection{常见数论函数}
@@ -292,22 +295,22 @@ i64 PR(i64 p) { // p > 1 && not prime
 
 \subsection{Mod Int}
 
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}[]
 constexpr int mod = 998'244'353;
-constexpr int Normal(int x, int m = mod) { return x<0&&(x+=m), x; }
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 	for (; y; y >>= 1, x = (u64) x * x % m)
 		if (y & 1) ans = (u64) ans * x % m;
 	return ans;
 }
-struct Mint { int val; constexpr Mint(i64 x = 0) : val(Normal(x % mod)) {} };
+constexpr int Normal(i64 x, int m = mod) { return x%=m, x<0&&(x+=m), x; }
+struct Mint { int val; constexpr Mint(i64 x = 0) : val(Normal(x)) {} };
 constexpr Mint Pow(Mint a, i64 p) { return qpow(a.val, Normal(p, mod-1)); }
 constexpr Mint Inv(Mint a) { return Pow(a, -1); }
 constexpr Mint operator- (Mint a) { return mod-a.val; }
 constexpr Mint operator+ (Mint a, Mint b) { return a.val + b.val; }
 constexpr Mint operator- (Mint a, Mint b) { return a.val - b.val; }
-constexpr Mint operator* (Mint a, Mint b) { return 1ll * a.val * b.val; }
-constexpr Mint operator/ (Mint a, Mint b) { return 1ll * a.val * Inv(b); }
+constexpr Mint operator* (Mint a, Mint b) { return (u64) a.val * b.val; }
+constexpr Mint operator/ (Mint a, Mint b) { return a * Inv(b); }
 constexpr Mint& operator+= (Mint &a, Mint b) { return a = a + b; }
 constexpr Mint& operator-= (Mint &a, Mint b) { return a = a - b; }
 constexpr Mint& operator*= (Mint &a, Mint b) { return a = a * b; }
@@ -342,7 +345,7 @@ array<int, 2> res2(int n, int p) {
 
 \subsection{Poly}
 
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}[]
 constexpr int mod = 998'244'353;
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 	for (; y; y >>= 1, x = (u64) x * x % m)
@@ -497,6 +500,22 @@ inline i64 calc(i64 p, i64 m, i64 k, i64 i) {
 	return (C(p,i)*C(m-i*k+p-1,p-1)+mod-calc(p,m,k,i+1))%mod;
 }
 \end{lstlisting}
+
+\point{第二类斯特林数}
+
+$$
+St2 (n, m)
+= \sum_{i = 0}^{m} \frac{ \left ( -1 \right ) ^ {m - i} i ^ n}{ i ! \left ( m - i \right ) ! }
+$$
+
+\point{卡特兰数}
+
+$$
+H_n
+= \frac{C (2 n, n)}{n + 1}
+= \frac{(4 n - 2) H_{n-1}}{n + 1}
+= C(2 n, n) - C (2 n, n - 1)
+$$
 
 \subsection{小球装盒问题}
 
@@ -676,11 +695,11 @@ i64 Query(i64 p, i64 ans = 0) { // 前缀求和
 
 \subsection{二维树状数组}
 
-维护四个二维普通树状数组 T0、T1、T2、T3：
+维护四个普通二维树状数组 $T_0$、$T_1$、$T_2$、$T_3$：
 
 \begin{itemize}
-\item 后缀 $(x, y) \sim \cdots$ 加 $v$：\texttt{T0.A(x, y, v), T1.A(x, y, v * x), T2.A(x, y, v * y), T3.A(x, y, v * x * y)}
-\item 前缀 $(1, 1) \sim (X, Y)$ 求和：\texttt{T3.Q(x, y) - T2.Q(x, y) * (x + 1) - T1.Q(x, y) * (y + 1) + T0.Q(x, y) * (x * y + x + y + 1)}
+\item 后缀 $(x, y) \sim \cdots$ 加：在 $(x, y)$ 单点加，修改量分别乘 $1$、$x$、$y$、$x \times y$。
+\item 前缀 $(1, 1) \sim (x, y)$ 求和：查询 $(x, y)$ 前缀和，结果分别乘 $(x \times y + x + y + 1)$、$(-y - 1)$、$(-x - 1)$、$1$ 并求和。
 \end{itemize}
 
 %\begin{lstlisting}
@@ -729,7 +748,7 @@ int select(int k) {
 	int x = 0, cur = 0;
 	for (int i = 1<<__lg(n); i; i /= 2)
 		if (x + i <= n && cur + tree[x+i] <= k)
-			x += i; cur = cur + tree[x];
+			x += i, cur = cur + tree[x];
 	return x;
 }
 \end{lstlisting}
@@ -751,8 +770,7 @@ inline void Build(int x, int l, int r) {
 	PushUp(x);
 }
 inline void Modify(int x, int l, int r, int pos, const Info &val) {
-	if (l == pos && pos == r)
-		return info[x] = val, void ();
+	if (l == pos && pos == r) return info[x] = val, void ();
 	int mid = l + (r - l) / 2;
 	if (pos <= mid) Modify(ls(x), l, mid, pos, val);
 	if (pos > mid) Modify(rs(x), mid+1, r, pos, val);
@@ -894,7 +912,7 @@ void build () { // v: i ; w: a[i] ; root=rc[0]
 %	return res;
 %}
 %\end{lstlisting}
-%
+
 %\subsection{(max, +)矩阵}
 %
 %\begin{lstlisting}
@@ -972,11 +990,14 @@ void cut(int x, int y) {
 
 \section{图论}
 
+\subsection{差分约束}
+
+$ a[x] - a[y] \leq w$ $\implies$ $y$ 向 $x$ 连长度为 $w$ 的有向边。
+
 \subsection{floyd}
 
 \begin{lstlisting}
-REP(k, 1, n) REP(x, 1, n) REP(y, 1, n)
-	f[x][y] = min(f[x][y], f[x][k] + f[k][y]);
+REP(k, 1, n) REP(x, 1, n) REP(y, 1, n) chmin(f[x][y], f[x][k] + f[k][y]);
 \end{lstlisting}
 
 \subsection{dinic}
@@ -1585,7 +1606,7 @@ rp.insert(6, 3, '!');    // 12*bcd!!!$;;;;
 
 \subsection{火车头精简版}
 
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}[]
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,avx512")
