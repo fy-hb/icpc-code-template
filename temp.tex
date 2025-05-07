@@ -163,10 +163,21 @@
 
 \begin{lstlisting}[]
 // result : -b < x < b AND -a < y <= a when a,b != 0
-array<int, 3> exgcd(int a, int b) {
+array<i64, 3> exgcd(i64 a, i64 b) {
 	if (!b) return {a, 1, 0};
 	auto [d, x, y] = exgcd(b, a % b);
 	return {d, y, x - y * (a / b)};
+}
+\end{lstlisting}
+
+\subsection{exCRT}
+
+\begin{lstlisting}
+array<i64, 2> exCRT(i64 a1, i64 p1, i64 a2, i64 p2) {
+	auto [g, a, b] = exgcd(p1, p2);
+	if ((a1 - a2) % g) return {-1, 0};
+	i64 k = __int128((a2 - a1) % p2 + p2) * (a + p2) % p2;
+	return {p1 / g * k + a1, p1 / g * p2};
 }
 \end{lstlisting}
 
@@ -188,7 +199,7 @@ int euler_phi(int n) {
 \subsection{预处理逆元}
 
 \begin{lstlisting}[]
-inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
+inv[1] = 1; REP(i, 2, n) inv[i] = u64(mod - mod / i) * inv[mod % i] % mod;
 \end{lstlisting}
 
 %\subsection{线性筛}
@@ -252,12 +263,11 @@ inv[1] = 1; REP(i, 2, n) inv[i] = (mod - mod/i) * inv[mod%i] % mod;
 \item 【非积性/加性】$\Lambda$ 函数：$\Lambda (p ^ \alpha)$（$\alpha \geq 1$）为 $\log p$，其余均为 $0$。
 \end{itemize}
 
-\subsection{Miller–Rabin}
+\subsection{Miller–Rabin + Pollard-rho}
 
 \begin{lstlisting}
 i64 mul(i64 a, i64 b, i64 p) {
-	i64 z = a * (db(1) / p) * b + 0.5L;
-	i64 res = a * b - z * p;
+	i64 z = a * (db(1) / p) * b + 0.5L, res = a * b - z * p;
 	return res + (res >> 63 & p);
 }
 i64 qpow(i64 x, i64 y, i64 p, i64 res = 1) {
@@ -270,7 +280,7 @@ int MR(i64 p) {
 	i64 d = __builtin_ctzll(p - 1), s = (p - 1) >> d;
 	for (auto a : {2, 3, 5, 7, 11, 13, 82, 373}) {
 		if (a % p == 0) continue;
-		i64 x = qpow(a, s, p), y;
+		i64 y, x = qpow(a, s, p);
 		for (int i = 0; i < d; ++i, x = y) {
 			y = mul(x, x, p);
 			if (y == 1 && x != 1 && x != p - 1)
@@ -300,13 +310,12 @@ constexpr int mod = 998'244'353;
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 	for (; y; y >>= 1, x = (u64) x * x % m)
 		if (y & 1) ans = (u64) ans * x % m;
-	return ans;
-}
+	return ans; }
 constexpr int Normal(i64 x, int m = mod) { return x%=m, x<0&&(x+=m), x; }
 struct Mint { int val; constexpr Mint(i64 x = 0) : val(Normal(x)) {} };
 constexpr Mint Pow(Mint a, i64 p) { return qpow(a.val, Normal(p, mod-1)); }
 constexpr Mint Inv(Mint a) { return Pow(a, -1); }
-constexpr Mint operator- (Mint a) { return mod-a.val; }
+constexpr Mint operator- (Mint a) { return mod - a.val; }
 constexpr Mint operator+ (Mint a, Mint b) { return a.val + b.val; }
 constexpr Mint operator- (Mint a, Mint b) { return a.val - b.val; }
 constexpr Mint operator* (Mint a, Mint b) { return (u64) a.val * b.val; }
@@ -469,9 +478,9 @@ P exp(const P &a) {
 
 \begin{lstlisting}
 void gen(int a, int b, int c) {
-    gen( a + 2*b + 2*c,  2*a + b + 2*c,  2*a + 2*b + 3*c);
-    gen(-a + 2*b + 2*c, -2*a + b + 2*c, -2*a + 2*b + 3*c);
-    gen( a - 2*b + 2*c,  2*a - b + 2*c,  2*a - 2*b + 3*c);
+    gen( a + 2 * b + 2 * c,  2 * a + b + 2 * c,  2 * a + 2 * b + 3 * c);
+    gen(-a + 2 * b + 2 * c, -2 * a + b + 2 * c, -2 * a + 2 * b + 3 * c);
+    gen( a - 2 * b + 2 * c,  2 * a - b + 2 * c,  2 * a - 2 * b + 3 * c);
 } // 用法: gen(3, 4, 5) 遍历所有 a < b 的素勾股数
 \end{lstlisting}
 
@@ -493,9 +502,8 @@ static inline i64 C(i64 x, i64 y) {
 
 \subsection{组合数学相关}
 
-\begin{lstlisting}[]
-// c[p]中 i个元素>=k的方案数
-inline i64 calc(i64 p, i64 m, i64 k, i64 i) {
+\begin{lstlisting}
+inline i64 calc(i64 p, i64 m, i64 k, i64 i) { // c[p]中 i个元素>=k的方案数
 	if (i * k > m || i > p) return 0;
 	return (C(p,i)*C(m-i*k+p-1,p-1)+mod-calc(p,m,k,i+1))%mod;
 }
@@ -654,27 +662,27 @@ vector<int> work(const vector<pt> &p) {
 }
 \end{lstlisting}
 
-\section{字符串}
-
-\subsection{manacher}
-
-\begin{lstlisting}
-void manacher(int sz) {
-	int R = 0, mid = 0;
-	REP(i, 1, sz-1) {
-		p[i] = R > i ? min(p[2*mid-i], R-i) : 1;
-		while (s1[i+p[i]] == s1[i-p[i]]) p[i]++;
-		if (i + p[i] > R) R = i + p[i], mid = i;
-	}
-}
-int is_pal(int l, int r) { return p[l+r] > r - l; }
-/*
-0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M [index]
-  1   1   1   1   1   11  1   1   1   1   1
-^ . a . b . c . b . a . a . b . c . b . a . @
-    2   2   6   2   2   2   2   6   2   2
-*/
-\end{lstlisting}
+%\section{字符串}
+%
+%\subsection{manacher}
+%
+%\begin{lstlisting}
+%void manacher(int sz) {
+%	int R = 0, mid = 0;
+%	REP(i, 1, sz-1) {
+%		p[i] = R > i ? min(p[2*mid-i], R-i) : 1;
+%		while (s1[i+p[i]] == s1[i-p[i]]) p[i]++;
+%		if (i + p[i] > R) R = i + p[i], mid = i;
+%	}
+%}
+%int is_pal(int l, int r) { return p[l+r] > r - l; }
+%/*
+%0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M [index]
+%  1   1   1   1   1   11  1   1   1   1   1
+%^ . a . b . c . b . a . a . b . c . b . a . @
+%    2   2   6   2   2   2   2   6   2   2
+%*/
+%\end{lstlisting}
 
 \section{数据结构}
 
@@ -849,28 +857,28 @@ int Get(int l, int r) {
 \subsection{FHQ \space Treap}
 
 \begin{lstlisting}
-struct Tr { int v, w, ls, rs; } tr[N]; // ...
-inline void pushup(int u) {  } // ...
-inline void pushdown(int u) {  } // ...
-int merge(int x, int y) {
+struct Tr { int v, w, ls, rs, siz; } tr[N];
+inline void Pushup(int u) {  }
+inline void Pushdown(int u) {  }
+int Merge(int x, int y) {
 	if (!x || !y) return x ^ y;
 	if (tr[x].w > tr[y].w)
-		return pushdown(x), tr[x].rs = merge(tr[x].rs, y), pushup(x), x;
-	return pushdown(y), tr[y].ls = merge(x,tr[y].ls), pushup(y), y;
+		return Pushdown(x), tr[x].rs = Merge(tr[x].rs, y), Pushup(x), x;
+	return Pushdown(y), tr[y].ls = Merge(x,tr[y].ls), Pushup(y), y;
 }
-void split(int u, int v, int &x, int &y) { // 按值: <= w | > w
+void Split(int u, int v, int &x, int &y) { // 按值: <= w | > w
 	if (!u) return x = y = 0, void();
-	pushdown(u);
-	if (tr[u].v <= v) x = u, split(tr[u].rs, v, tr[u].rs, y);
-	else y = u, split(tr[u].ls, v, x, tr[u].ls);
-	pushup(u);
+	Pushdown(u);
+	if (tr[u].v <= v) x = u, Split(tr[u].rs, v, tr[u].rs, y);
+	else y = u, Split(tr[u].ls, v, x, tr[u].ls);
+	Pushup(u);
 }
-void split(int u, int siz, int &x, int &y) { // 按大小: siz | n-siz
+void Split(int u, int siz, int &x, int &y) { // 按大小: siz | n-siz
 	if (!u) return x = y = 0, void();
-	pushdown(u);
-	if (tr[tr[u].ls].siz + 1 > siz) y = u, split(tr[u].ls, siz, x, tr[u].ls);
-	else x = u, split(tr[u].rs, siz - tr[tr[u].ls].siz - 1, tr[u].rs, y);
-	pushup(u);
+	Pushdown(u);
+	if (tr[tr[u].ls].siz + 1 > siz) y = u, Split(tr[u].ls, siz, x, tr[u].ls);
+	else x = u, Split(tr[u].rs, siz - tr[tr[u].ls].siz - 1, tr[u].rs, y);
+	Pushup(u);
 }
 \end{lstlisting}
 
@@ -1140,9 +1148,9 @@ void tarjan(int u) {
 
 \begin{lstlisting}
 vector<int> bcc[N];
-int dfn[N], low[N], st[N], bel[N], top, n, m, cnt, tt;
+int dfn[N], low[N], st[N], bel[N], top, cnt, tms;
 void tarjan(int u, int in) {
-	low[u] = dfn[u] = ++tt, st[++top] = u;
+	low[u] = dfn[u] = ++tms, st[++top] = u;
 	for (auto [v, id] : adj[u]) {
 		if (id == in) continue;
 		if (!dfn[v]) tarjan(v, id); chmin(low[u], low[v]);
@@ -1338,13 +1346,13 @@ REP(i, 0, 12) cout << s.order_of_key(i) << " "; cout << "\n";
 \point{可并堆}
 
 \begin{lstlisting}
-__gnu_pbds::priority_queue<int, less<int>, // 使用greater则是小根堆
-__gnu_pbds::pairing_heap_tag> q;
-// pairing_heap_tag     配对堆
-// binomial_heap_tag    二项堆
-// rc_binomial_heap_tag 冗余计数二项堆
-// binary_heap_tag      二叉堆
-// thin_heap_tag        斐波那契堆
+__gnu_pbds::priority_queue<int, less<int>, // 小根堆用 greater
+	__gnu_pbds::pairing_heap_tag> q;
+//     pairing_heap_tag     配对堆
+//     binomial_heap_tag    二项堆
+//     rc_binomial_heap_tag 冗余计数二项堆
+//     binary_heap_tag      二叉堆
+//     thin_heap_tag        斐波那契堆
 \end{lstlisting}
 
 \texttt{a.join(b)}: 把优先队列 $b$ 合并进 $a$ 并把 $b$ 清空
@@ -1580,7 +1588,7 @@ rp.insert(6, 3, '!');    // 12*bcd!!!$;;;;
 \begin{lstlisting}[]
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,avx512")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.1,sse4.2,sse4a,abm,avx,avx2,avx512f,prefer-vector-width=512,tune=native")
 #pragma GCC optimize("inline")
 \end{lstlisting}
 
@@ -1693,7 +1701,7 @@ ulimit -v 1048576
 \subsection{编译参数}
 
 \begin{itemize}
-\item \texttt{-fsanitize=address,undefined,leak,memory -ftrapv}：检测内存错误、UB、内存泄漏、未初始化内存访问、有符号溢出检查。
+\item \texttt{-fsanitize=address,undefined,leak -ftrapv}：检测内存错误、UB、内存泄漏、有符号溢出检查。
 \item \texttt{-Wall -Wextra -Wshadow -Wconversion -Wsign-conversion}：常见警告，变量 shadow、隐式类型转换、有符号/无符号转换。
 \item \texttt{-D\_GLIBCXX\_DEBUG}：STL debug。
 \end{itemize}
