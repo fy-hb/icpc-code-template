@@ -1734,6 +1734,18 @@ Fraction('3.1415926535897932').limit_denominator(10)  # 22/7
 Fraction('3.1415926535897932').limit_denominator(100)  # 311/99
 \end{lstlisting}
 
+\subsection{浮点数 cmp (对拍用)}
+
+\begin{lstlisting}[language=python]
+import sys # 用法: python ./cmp.py ./a.out ./a.ans
+get = lambda name : [float(i) for i in open(name, 'r').read().split()]
+if __name__ == "__main__":
+    a, b = get(sys.argv[1]), get(sys.argv[2])
+    assert len(a) == len(b)
+    for x, y in zip(a, b):
+        assert abs(x - y) / max(1, abs(y)) <= 1E-4
+\end{lstlisting}
+
 %\subsection{质数表}
 %
 %\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
