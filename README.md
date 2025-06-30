@@ -11,3 +11,11 @@
 ```sh
 make
 ```
+
+## 参考
+
+本项目在编写过程中参考了以下项目，在此表示感谢。
+
+[calabash_boy的板子](https://github.com/4thcalabash/code_library)
+
+[UESTC_Dagon的板子](https://github.com/mzry1992/ACMICPCTemplate/tree/master)
