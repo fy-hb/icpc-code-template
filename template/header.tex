@@ -20,6 +20,7 @@
 \usepackage{xstring}
 \usepackage{hyperref}
 \usepackage{svg}
+\usepackage{enumitem}
 
 %\setmainfont{LXGW WenKai}
 %\setmainfont{Source Han Serif CN SemiBold}
@@ -35,7 +36,9 @@
 
 \geometry{left=1cm,right=1cm,top=1.5cm,bottom=1.5cm}
 
-%\renewcommand{\normalsize}{\fontsize{10}{10}\selectfont}
+\setlist[itemize]{itemsep=0pt,partopsep=0pt,parsep=0pt,topsep=0pt}
+\setlist[enumerate]{itemsep=0pt,partopsep=0pt,parsep=0pt,topsep=0pt}
+\renewcommand{\normalsize}{\fontsize{10}{10}\selectfont}
 
 \def\KWauthor{frost\_ice @ HEU}
 \def\KWtitle{Code Template}
@@ -49,7 +52,7 @@
 \renewcommand\tableofcontents{%
 	\section*{\makebox[\linewidth][c]{\contentsname}%
 		\@mkboth{\MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
-	\begin{multicols}{3}%
+	\begin{multicols}{2}%
 		\@starttoc{toc}%
 	\end{multicols}
 }
@@ -154,3 +157,4 @@
 \lfoot{}
 \cfoot{第 \thepage 页 - 共 \pageref{LastPage} 页}
 \rfoot{}
+

@@ -6,6 +6,7 @@ build/main.pdf: $(SRCS) makefile sections.yaml clean
 	python doall.py > build/main.tex
 	cd build && xelatex -synctex=1 -shell-escape -8bit -interaction=nonstopmode main.tex
 	cd build && xelatex -synctex=1 -shell-escape -8bit -interaction=nonstopmode main.tex
+	cd build && xelatex -synctex=1 -shell-escape -8bit -interaction=nonstopmode main.tex
 
 
 .PHONY: clean check
