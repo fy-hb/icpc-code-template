@@ -10,7 +10,7 @@
       file: 预处理逆元.cpp
     - name: 常见数论函数
       file: 常见数论函数.tex
-    - name: Miller–Rabin + Pollard-rho
+    - name: Miller–Rabin+Pollard-rho
       file: Miller–Rabin + Pollard-rho.cpp
     - name: Mod Int
       file: Mod Int.cpp
@@ -28,7 +28,7 @@
       file: 组合数学相关.tex
     - name: FFT
       file: FFT.cpp
-    - name: FMT / 或卷积
+    - name: FMT/或卷积
       file: FMT.cpp
     - name: 子集卷积
       file: 子集卷积.cpp
@@ -68,11 +68,11 @@
       file: [dinic.cpp, 上下界最大流.tex]
     - name: 费用流(EK)
       file: [费用流(EK).cpp, 有负边的费用流问题.tex]
-    - name: tarjan (SCC)
+    - name: tarjan(SCC)
       file: tarjan(SCC).cpp
-    - name: tarjan (边双)
+    - name: tarjan(边双)
       file: tarjan(边双).cpp
-    - name: tarjan (点双)
+    - name: tarjan(点双)
       file: tarjan(点双).cpp
 - name: Misc
   subs:

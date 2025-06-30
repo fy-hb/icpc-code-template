@@ -4,7 +4,7 @@ import re
 
 
 def escape(s: str):
-    return s.replace(r"_", r"\_").replace(r" ", r" \space ")
+    return s.replace(r"_", r"\_")
 
 
 def gethash(s: str, lang: str):
@@ -47,20 +47,20 @@ if __name__ == "__main__":
                     else:
                         hashes.append(gethash(line, lang))
 
-            print()
-            for index, hash in enumerate(hashes, 1):
-                print("\\DefineCustomLabel{{{0}}}{{{1}}}".format(index, hash))
-            print()
+                print()
+                for index, hash in enumerate(hashes, 1):
+                    print("\\DefineCustomLabel{{{0}}}{{{1}}}".format(index, hash))
+                print()
 
-            if lang != "tex":
-                print("\\begin{{minted}}{{{0}}}".format(lang))
+                if lang != "tex":
+                    print("\\begin{{minted}}{{{0}}}".format(lang))
 
-            print(code, end="")
+                print(code, end="")
 
-            if lang != "tex":
-                print("\\end{{minted}}".format())
+                if lang != "tex":
+                    print("\\end{{minted}}".format())
 
-            print()
+                print()
 
     with open("template/ender.tex", "r", encoding="UTF-8") as file:
         print(file.read(), end="")
