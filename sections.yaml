@@ -1,0 +1,114 @@
+- name: 数论
+  subs:
+    - name: ExGcd
+      file: ExGcd.cpp
+    - name: ExCRT
+      file: ExCRT.cpp
+    - name: EulerPhi
+      file: EulerPhi.cpp
+    - name: 预处理逆元
+      file: 预处理逆元.cpp
+    - name: 常见数论函数
+      file: 常见数论函数.tex
+    - name: Miller–Rabin + Pollard-rho
+      file: Miller–Rabin + Pollard-rho.cpp
+    - name: Mod Int
+      file: Mod Int.cpp
+    - name: 二次剩余
+      file: 二次剩余.cpp
+    - name: Poly
+      file: Poly.cpp
+- name: 数学
+  subs:
+    - name: 素勾股数
+      file: 素勾股数.cpp
+    - name: 组合数
+      file: 组合数.cpp
+    - name: 组合数学相关
+      file: 组合数学相关.tex
+    - name: FFT
+      file: FFT.cpp
+    - name: FMT / 或卷积
+      file: FMT.cpp
+    - name: 子集卷积
+      file: 子集卷积.cpp
+    - name: FWT
+      file: FWT.cpp
+- name: 二维计算几何
+  subs:
+    - name: 凸包
+      file: 凸包.cpp
+- name: 数据结构
+  subs:
+    - name: 区间加和树状数组
+      file: 区间加和树状数组.cpp
+    - name: 二维树状数组
+      file: 二维树状数组.tex
+    - name: 树状数组二分
+      file: 树状数组二分.cpp
+    - name: 单点修改线段树
+      file: 单点修改线段树.cpp
+    - name: 区间修改懒标记线段树
+      file: 区间修改懒标记线段树.cpp
+    - name: ST表
+      file: ST表.cpp
+    - name: FHQ Treap
+      file: FHQ Treap.cpp
+    - name: 笛卡尔树
+      file: 笛卡尔树.cpp
+    - name: LCT
+      file: LCT.cpp
+- name: 图论
+  subs:
+    - name: 差分约束
+      file: 差分约束.tex
+    - name: floyd
+      file: floyd.cpp
+    - name: dinic
+      file: [dinic.cpp, 上下界最大流.tex]
+    - name: 费用流(EK)
+      file: [费用流(EK).cpp, 有负边的费用流问题.tex]
+    - name: tarjan (SCC)
+      file: tarjan(SCC).cpp
+    - name: tarjan (边双)
+      file: tarjan(边双).cpp
+    - name: tarjan (点双)
+      file: tarjan(点双).cpp
+- name: Misc
+  subs:
+    - name: cout精度
+      file: cout精度.cpp
+    - name: 上下取整
+      file: 上下取整.cpp
+    - name: mmap映射stdin
+      file: mmap映射stdin.cpp
+    - name: read()
+      file: read().cpp
+    - name: 随机
+      file: 随机.cpp
+    - name: __builtin_xxx
+      file: __builtin_xxx.tex
+    - name: Gosper's hack
+      file: Gosper's hack.cpp
+    - name: <ext/pbds/>
+      file: pbds.tex
+    - name: 时间相关
+      file: 时间相关.tex
+    - name: 火车头精简版
+      file: 火车头精简版.cpp
+    - name: STL积分/求和
+      file: STL积分求和.tex
+    - name: 其他公式
+      file: 其他公式.tex
+    - name: bashrc
+      file: bashrc.sh
+    - name: 编译参数
+      file: 编译参数.tex
+    - name: Xor Shift
+      file: Xor Shift.cpp
+    - name: python Decimal
+      file: python Decimal.py
+    - name: python Fractions
+      file: python Fractions.py
+    - name: 浮点数cmp(对拍用)
+      file: 浮点数cmp(对拍用).py

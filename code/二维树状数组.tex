@@ -1,0 +1,6 @@
+维护四个普通二维树状数组 $T_0$、$T_1$、$T_2$、$T_3$：
+
+\begin{itemize}
+\item 后缀 $(x, y) \sim \cdots$ 加：在 $(x, y)$ 单点加，修改量分别乘 $1$、$x$、$y$、$x \times y$。
+\item 前缀 $(1, 1) \sim (x, y)$ 求和：查询 $(x, y)$ 前缀和，结果分别乘 $(x \times y + x + y + 1)$、$(-y - 1)$、$(-x - 1)$、$1$ 并求和。
+\end{itemize}

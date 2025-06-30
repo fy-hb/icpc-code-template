@@ -1,0 +1,154 @@
+\documentclass[a4paper,landscape,twocolumn]{ctexart}
+\usepackage[Glenn]{fncychap}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{lastpage}
+\usepackage{ctex}
+\usepackage{relsize}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{epigraph}
+\usepackage{expdlist}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\usepackage{xstring}
+
+%\setmainfont{LXGW WenKai}
+%\setmainfont{Source Han Serif CN SemiBold}
+%\setmathrm{Source Han Serif CN SemiBold}
+%\setmathsf{Source Han Serif CN SemiBold}
+%\setmathtt{Source Han Serif CN SemiBold}
+\setsansfont{WenQuanYi Micro Hei}
+\setmonofont{JetBrains Mono NL}
+\setCJKmonofont{WenQuanYi Micro Hei Mono}
+\setCJKmainfont{Source Han Serif CN}
+%\setCJKmainfont{LXGW WenKai}
+%\setCJKmainfont{WenQuanYi Micro Hei}
+
+\geometry{left=1cm,right=1cm,top=1.5cm,bottom=1.5cm}
+
+%\renewcommand{\normalsize}{\fontsize{10}{10}\selectfont}
+
+\def\KWauthor{frost\_ice @ HEU}
+\def\KWtitle{Code Template}
+
+\title{\textlarger[10]{\KWtitle}}
+\author{\KWauthor}
+%\date{2024年12月}
+
+% 定义目录格式
+\makeatletter
+\renewcommand\tableofcontents{%
+	\section*{\makebox[\linewidth][c]{\contentsname}%
+		\@mkboth{\MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
+	\begin{multicols}{3}%
+		\@starttoc{toc}%
+	\end{multicols}
+}
+\makeatother
+
+\setminted{
+    fontsize=\footnotesize,
+	fontfamily=tt,
+	baselinestretch=1,
+	linenos=true,
+    numbers=left,
+    numberblanklines=true,
+    stepnumber=1,
+    numbersep=2pt,
+    frame=single,
+    rulecolor=\color{black},
+	xleftmargin=15pt,
+	% tab 相关设置
+	showtabs=true,
+    tabsize=2,
+	tab=$\mid$\space,
+	% 换行
+    breaklines=true,
+	breakafter={.,\space,-,/,\#,\{,\},\%,[,],\,},
+    breakaftersymbolpost=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookrightarrow}\space},
+	breakaftersymbolpre={},
+	breaksymbolleft={},
+	breaksymbolright={},
+%    escapeinside=@@,
+}
+
+\setminted[cpp]{
+	extrakeywordsreserved={REP,REV,*,...},
+	extrakeywordstype={i64,u64,i32,u32,array,set,vector,*,...},
+}
+
+\setmintedinline{bgcolor={}}
+\usemintedstyle{xcode}
+
+
+% 1. 定义一个映射表，把“行号索引”映射到“自定义标签”
+%    这里我们用宏名 CustomLabel@<n> 存储第 n 行的标签
+\newcommand\DefineCustomLabel[2]{%
+  % #1=行索引，#2=标签文本
+  \expandafter\gdef\csname CustomLabel@#1\endcsname{#2}%
+}
+
+% 在导言区把需要的标签都“加载”进来
+% 若有更多行，可继续 \DefineCustomLabel{3}{xxx}、\DefineCustomLabel{4}{yyy} …
+
+% 2. 重定义 minted 内部的行号打印命令
+\makeatletter
+\renewcommand{\theFancyVerbLine}{{%
+ \color{gray}%
+    % LaTeX 内置的行号计数器是 FancyVerbLine
+    \edef\curIdx{\arabic{FancyVerbLine}}%
+    % 尝试取出 CustomLabel@\curIdx，如果不存在就退回数字
+    \ifcsdef{CustomLabel@\curIdx}{%
+      \csuse{CustomLabel@\curIdx}%
+    }{%
+      \curIdx%
+    }%
+  }%
+}
+\makeatother
+
+\begin{document}
+
+\newgeometry{left=1cm,right=1cm,top=1.5cm,bottom=1.5cm}
+\begin{titlepage}
+\thispagestyle{plain}
+\thispagestyle{empty}
+\begin{center}
+	~\\[100pt]
+	\hrule\ \\[8pt]
+	\fontsize{48pt}{\baselineskip}\selectfont  \textsc{\KWtitle}\\[8pt]
+	~\\[20pt]
+%		\includegraphics[scale=1]{./cover.jpg}
+	~\\[70pt]
+	\huge \KWauthor\\[8pt]
+	\Large Last build at \today
+	~\\[80pt]
+	\hrule\ \\[8pt]
+\end{center}
+\pagebreak
+%\pagestyle{plain}
+\pagestyle{fancy}
+\lhead{}
+\rhead{}
+\chead{\KWtitle, \KWauthor}
+\cfoot{}
+\tableofcontents
+\end{titlepage}
+\restoregeometry
+
+\pagestyle{fancy}
+
+\pagestyle{fancy}
+\lhead{\large\KWtitle, \KWauthor}
+\chead{}
+\rhead{\Huge\bfseries\thepage}
+\lfoot{}
+\cfoot{第 \thepage 页 - 共 \pageref{LastPage} 页}
+\rfoot{}

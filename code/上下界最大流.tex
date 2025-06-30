@@ -1,0 +1,9 @@
+对于上下界最大流问题：
+
+\begin{itemize}
+\item 对于 $u \to u$，范围为 $[l, r]$ 的边：建边 $u \xrightarrow{r - l} v$，$tot[u]$ 减 $l$，$tot[v]$ 加 $l$。
+\item 对于所有 $tot[i] > 0$ 的点 $i$：建边 $s' \xrightarrow{tot[i]} i$ 且让 $sum$ 加上 $tot[i]$；
+\item 对于所有 $tot[i] < 0$ 的点 $i$：建边 $i \xrightarrow{-tot[i]} t'$。（注意这里 $i$ 都包括 $s$ 和 $t$）
+\item 建边 $t \xrightarrow{\inf} s$，然后跑 $s'$ 到 $t'$ 的最大流 $flow_1$，$flow_1 \neq sum$，则无解。
+\item 删除 $t \xrightarrow{\inf} s$ 的边，跑 $s$ 到 $t$ 的最大流 $flow_2$，$flow_1 + flow_2$ 就是答案。
+\end{itemize}

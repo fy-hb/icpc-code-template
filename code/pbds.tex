@@ -1,0 +1,64 @@
+\begin{itemize}
+\item 哈希表
+\begin{minted}{cpp}
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/hash_policy.hpp>
+__gnu_pbds::gp_hash_table<int, int> mp1; // 拉链法
+__gnu_pbds::cc_hash_table<int, int> mp2; // 探测法
+\end{minted}
+\item 平衡树
+\begin{minted}{cpp}
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+template<class T, class TT = __gnu_pbds::null_type>
+using ordered_set = __gnu_pbds::tree<
+	T, TT, std::less<T>,
+	__gnu_pbds::rb_tree_tag,
+	// rb_tree_tag 红黑树
+	// splay_tree_tag splay树
+	__gnu_pbds::tree_order_statistics_node_update
+>;
+\end{minted}
+\texttt{order\_of\_key(x)}  返回比 $x$ 小的数的数量。
+
+\texttt{find\_by\_order(x)}  返回排名 $x$ 所对应元素的迭代器。
+
+\begin{minted}{cpp}
+ordered_set<int> s;
+s.insert(...); // 1, 3, 5, 7, 11
+REP(i, 0, 6) cout << *s.find_by_order(i) << " "; cout << "\n";
+// 1, 3, 5, 7, 11, 0, 0
+REP(i, 0, 12) cout << s.order_of_key(i) << " "; cout << "\n";
+// 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5
+//   (1)   (3)   (5)   (7)         (11)
+\end{minted}
+
+\texttt{split(x,b)} 按照 $x$ 分裂，小于等于 $x$ 的属于当前树，其余的属于 $b$ 树。
+
+\texttt{join(x)} 将两颗树合并。前提是两者值域没有交集。
+\item 可并堆
+\begin{minted}{cpp}
+__gnu_pbds::priority_queue<int, less<int>, // 小根堆用 greater
+	__gnu_pbds::pairing_heap_tag> q;
+//     pairing_heap_tag     配对堆
+//     binomial_heap_tag    二项堆
+//     rc_binomial_heap_tag 冗余计数二项堆
+//     binary_heap_tag      二叉堆
+//     thin_heap_tag        斐波那契堆
+\end{minted}
+
+\texttt{a.join(b)}: 把优先队列 $b$ 合并进 $a$ 并把 $b$ 清空
+
+\item rope
+
+\begin{minted}{cpp}
+#include <ext/rope>
+__gnu_cxx::rope<char> rp = "1234";
+rp.append("abcd");       // 1234abcd
+rp.append('$');          // 1234abcd$
+rp.replace(3, 2, "***"); // 123***bcd$
+rp.append(4, ';');       // 123***bcd$;;;;
+rp.erase(2, 3);          // 12*bcd$;;;;
+rp.insert(6, 3, '!');    // 12*bcd!!!$;;;;
+\end{minted}
+\end{itemize}

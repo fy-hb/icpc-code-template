@@ -9,5 +9,5 @@
 ## 构建
 
 ```sh
-xelatex  -synctex=1 -interaction=nonstopmode temp.tex
+make
 ```
