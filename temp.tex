@@ -1,6 +1,5 @@
 \documentclass[a4paper,landscape,twocolumn]{ctexart}
 \usepackage[Glenn]{fncychap}
-\usepackage[procnames]{listings}
 \usepackage{xcolor}
 \usepackage{verbatim}
 \usepackage{geometry}
@@ -8,15 +7,17 @@
 \usepackage{multicol}
 \usepackage{multirow}
 \usepackage{lastpage}
-\usepackage[UTF8]{ctex}
-%\usepackage{minted}
+\usepackage{ctex}
 \usepackage{relsize}
-%\usepackage{CJKutf8}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage {epigraph}
-\usepackage {expdlist}
-\usepackage {graphicx}
+\usepackage{epigraph}
+\usepackage{expdlist}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\usepackage{xstring}
 
 %\setmainfont{LXGW WenKai}
 %\setmainfont{Source Han Serif CN SemiBold}
@@ -25,17 +26,14 @@
 %\setmathtt{Source Han Serif CN SemiBold}
 \setsansfont{WenQuanYi Micro Hei}
 \setmonofont{JetBrains Mono NL}
+\setCJKmonofont{WenQuanYi Micro Hei Mono}
 \setCJKmainfont{Source Han Serif CN}
 %\setCJKmainfont{LXGW WenKai}
 %\setCJKmainfont{WenQuanYi Micro Hei}
 
 \geometry{left=1cm,right=1cm,top=1.5cm,bottom=1.5cm}
-%\setCJKmainfont{SimSun}
 
-% 调整列间距（可选）
-\setlength{\columnsep}{0.4cm}
-%\setlength\columnseprule{0.4pt}
-%\setCJKmainfont{SimSun}
+%\renewcommand{\normalsize}{\fontsize{10}{10}\selectfont}
 
 \def\KWauthor{frost\_ice @ HEU}
 \def\KWtitle{Code Template}
@@ -55,59 +53,66 @@
 }
 \makeatother
 
-% 代码高亮的基本颜色设置
-\definecolor{mygreen}{RGB}{28,172,0}
-\definecolor{mylilas}{RGB}{170,55,241}
-\definecolor{mygray}{RGB}{128,128,128}
-\definecolor{mymauve}{RGB}{124,6,123}
-\definecolor{myblue}{RGB}{14,84,175}
-\definecolor{mybg}{RGB}{248,248,248}
-
-% 代码样式设置
-\lstset{
-	language=C++,                           % 设置语言
-	basicstyle=\footnotesize\ttfamily,      % 基本代码风格
-	columns=fixed,                          %
-	numbers=left,                           % 行号的位置在左边
-	numberstyle=\footnotesize\color{mygray},% 行号的样式
-	stepnumber=1,                           % 行号的步进值
-	numbersep=5pt,                          % 行号的距离
-%	backgroundcolor=\color{mybg},           % 代码块背景色
-	showspaces=false,                       % 不显示空格
-	showstringspaces=false,                 % 不显示字符串中的空格
-	showtabs=false,                         % 不显示制表符
-	frame=single,                           % 显示框架
-	rulecolor=\color{black},                % 框架颜色
-	tabsize=2,                              % 制表符长度
-	captionpos=t,                           % 标题位置 t=top
-	breaklines=true,                        % 自动换行
-%	breakatwhitespace=true,                 % 只在空格处换行
-	postbreak=\raisebox{0ex}[0ex][0ex]      % 换行的样式
-		{\ensuremath{\hookrightarrow}\space},
-	commentstyle=\color{mygreen}\CJKfontspec{WenQuanYi Micro Hei Mono},
-								            % 注释的样式
-	keywordstyle={\bfseries\color{blue}},   % 关键字的样式
-	stringstyle=\color{mymauve},            % 字符串样式
-	escapeinside={(*@}{@*)},                % 特殊符号
-	morekeywords={constexpr,REP,REV,*,...}, % 更多的关键字
-	deletekeywords={...},                   % 删除默认的关键字
-	% 完整的边框
-	xleftmargin=2em,                        % 左边距
-%	xrightmargin=2em,                       % 右边距
-%	aboveskip=1em,                          % 上边距
-%	belowskip=1em,                          % 下边距
-	% 增强的关键字
-	emph={int,char,double,float,unsigned,void,bool,i64,u64,i32,u32,db,cp,long},
-	emphstyle={\bfseries\color{mymauve}},
-	% 标识符样式
-	identifierstyle=\color{black},
+\setminted{
+    fontsize=\footnotesize,
+	fontfamily=tt,
+	baselinestretch=1,
+	linenos=true,
+    numbers=left,
+    numberblanklines=true,
+    stepnumber=1,
+    numbersep=2pt,
+    frame=single,
+    rulecolor=\color{black},
+	xleftmargin=15pt,
+	% tab 相关设置
+	showtabs=true,
+    tabsize=2,
+	tab=$\mid$\space,
+	% 换行
+    breaklines=true,
+	breakafter={.,\space,-,/,\#,\{,\},\%,[,],\,},
+    breakaftersymbolpost=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookrightarrow}\space},
+	breakaftersymbolpre={},
+	breaksymbolleft={},
+	breaksymbolright={},
+%    escapeinside=@@,
 }
 
-\newcommand{\point}[1]{
-	\begin{itemize}
-		\item \textbf{#1}
-	\end{itemize}
+\setminted[cpp]{
+	extrakeywordsreserved={REP,REV,*,...},
+	extrakeywordstype={i64,u64,i32,u32,array,set,vector,*,...},
 }
+
+\setmintedinline{bgcolor={}}
+\usemintedstyle{xcode}
+
+
+% 1. 定义一个映射表，把“行号索引”映射到“自定义标签”
+%    这里我们用宏名 CustomLabel@<n> 存储第 n 行的标签
+\newcommand\DefineCustomLabel[2]{%
+  % #1=行索引，#2=标签文本
+  \expandafter\gdef\csname CustomLabel@#1\endcsname{#2}%
+}
+
+% 在导言区把需要的标签都“加载”进来
+% 若有更多行，可继续 \DefineCustomLabel{3}{xxx}、\DefineCustomLabel{4}{yyy} …
+
+% 2. 重定义 minted 内部的行号打印命令
+\makeatletter
+\renewcommand{\theFancyVerbLine}{{%
+ \color{gray}%
+    % LaTeX 内置的行号计数器是 FancyVerbLine
+    \edef\curIdx{\arabic{FancyVerbLine}}%
+    % 尝试取出 CustomLabel@\curIdx，如果不存在就退回数字
+    \ifcsdef{CustomLabel@\curIdx}{%
+      \csuse{CustomLabel@\curIdx}%
+    }{%
+      \curIdx%
+    }%
+  }%
+}
+\makeatother
 
 \begin{document}
 
@@ -148,42 +153,42 @@
 \cfoot{第 \thepage 页 - 共 \pageref{LastPage} 页}
 \rfoot{}
 
-
 \section{数论}
 
 \subsection{ExGcd}
 
-% \begin{lstlisting}[]
+% \begin{minted}{cpp}
 % i64 exgcd(i64 a, i64 b, i64 &x, i64 &y) {
 % 	if (b == 0) { x = 1, y = 0; return a; }
 % 	i64 d = exgcd(b, a % b, y, x);
 % 	y -= a / b * x; return d;
 % }
-% \end{lstlisting}
+% \end{minted}
 
-\begin{lstlisting}[]
+
+\begin{minted}{cpp}
 // result : -b < x < b AND -a < y <= a when a,b != 0
 array<i64, 3> exgcd(i64 a, i64 b) {
 	if (!b) return {a, 1, 0};
 	auto [d, x, y] = exgcd(b, a % b);
 	return {d, y, x - y * (a / b)};
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{exCRT}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 array<i64, 2> exCRT(i64 a1, i64 p1, i64 a2, i64 p2) {
 	auto [g, a, b] = exgcd(p1, p2);
 	if ((a1 - a2) % g) return {-1, 0};
 	i64 k = __int128((a2 - a1) % p2 + p2) * (a + p2) % p2;
 	return {p1 / g * k + a1, p1 / g * p2};
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{euler\_phi}
 
-\begin{lstlisting}[]
+\begin{minted}{cpp}
 int euler_phi(int n) {
 	int ans = n;
 	for (int i = 2; i * i <= n; i++)
@@ -194,20 +199,20 @@ int euler_phi(int n) {
 	if (n > 1) ans = ans / n * (n - 1);
 	return ans;
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{预处理逆元}
 
-\begin{lstlisting}[]
+\begin{minted}{cpp}
 inv[1] = 1; REP(i, 2, n) inv[i] = u64(mod - mod / i) * inv[mod % i] % mod;
-\end{lstlisting}
+\end{minted}
 
 %\subsection{线性筛}
 %
 %标记 \texttt{vis} 了吗？该 \texttt{break} 的地方 \texttt{break} 了吗？
 
 %
-%\begin{lstlisting}[]
+%\begin{minted}{cpp}
 % const int N = 1e5+10;
 % bitset<N> vis;
 % vector<int> primes;
@@ -248,7 +253,7 @@ inv[1] = 1; REP(i, 2, n) inv[i] = u64(mod - mod / i) * inv[mod % i] % mod;
 % 		}
 % 	}
 % }
-%\end{lstlisting}
+%\end{minted}
 
 \subsection{常见数论函数}
 
@@ -265,7 +270,7 @@ inv[1] = 1; REP(i, 2, n) inv[i] = u64(mod - mod / i) * inv[mod % i] % mod;
 
 \subsection{Miller–Rabin + Pollard-rho}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 i64 mul(i64 a, i64 b, i64 p) {
 	i64 z = a * (db(1) / p) * b + 0.5L, res = a * b - z * p;
 	return res + (res >> 63 & p);
@@ -301,11 +306,11 @@ i64 PR(i64 p) { // p > 1 && not prime
 	}
 	return gcd(pp, p);
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{Mod Int}
 
-\begin{lstlisting}[]
+\begin{minted}{cpp}
 constexpr int mod = 998'244'353;
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 	for (; y; y >>= 1, x = (u64) x * x % m)
@@ -331,11 +336,11 @@ constexpr Mint operator-- (Mint &a, int) { auto b = a; return a -= 1, b; }
 template <typename S> S& operator<< (S &s, Mint a) { return s << a.val; }
 constexpr bool operator== (Mint a, Mint b) { return a.val == b.val; }
 constexpr Mint operator "" _M (unsigned long long x) { return x % mod; }
-\end{lstlisting}
+\end{minted}
 
 \subsection{二次剩余}
 
-\begin{lstlisting}[]
+\begin{minted}{cpp}
 array<int, 2> res2(int n, int p) {
 	if (!n) return {0, 0};
 	if (qpow(n, p / 2, p) != 1) return {-1, -1};
@@ -350,11 +355,11 @@ array<int, 2> res2(int n, int p) {
 		if (y & 1) ans = mul(ans, x);
 	return {min(ans[0], p - ans[0]), max(ans[0], p - ans[0])};
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{Poly}
 
-\begin{lstlisting}[]
+\begin{minted}{cpp}
 constexpr int mod = 998'244'353;
 constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
 	for (; y; y >>= 1, x = (u64) x * x % m)
@@ -470,23 +475,23 @@ P exp(const P &a) {
 		b = trunc(b * (P {1} - log(trunc(b, t)) + trunc(a, t)), t);
 	return trunc(b, n);
 }
-\end{lstlisting}
+\end{minted}
 
 \section{数学}
 
 \subsection{素勾股数}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 void gen(int a, int b, int c) {
     gen( a + 2 * b + 2 * c,  2 * a + b + 2 * c,  2 * a + 2 * b + 3 * c);
     gen(-a + 2 * b + 2 * c, -2 * a + b + 2 * c, -2 * a + 2 * b + 3 * c);
     gen( a - 2 * b + 2 * c,  2 * a - b + 2 * c,  2 * a - 2 * b + 3 * c);
 } // 用法: gen(3, 4, 5) 遍历所有 a < b 的素勾股数
-\end{lstlisting}
+\end{minted}
 
 \subsection{组合数}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 int fac[N], inv[N];
 static inline void Init(i64 n) {
 	fac[0] = 1;
@@ -498,36 +503,29 @@ static inline i64 C(i64 x, i64 y) {
 	if (y > x || y < 0) return 0;
 	return (u64) fac[x] * inv[y] % mod * inv[x-y] % mod;
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{组合数学相关}
-
-\begin{lstlisting}
+\begin{itemize}
+\begin{minted}{cpp}
 inline i64 calc(i64 p, i64 m, i64 k, i64 i) { // c[p]中 i个元素>=k的方案数
 	if (i * k > m || i > p) return 0;
 	return (C(p,i)*C(m-i*k+p-1,p-1)+mod-calc(p,m,k,i+1))%mod;
 }
-\end{lstlisting}
-
-\point{第二类斯特林数}
-
+\end{minted}
+\item 第二类斯特林数
 $$
 St2 (n, m)
 = \sum_{i = 0}^{m} \frac{ \left ( -1 \right ) ^ {m - i} i ^ n}{ i ! \left ( m - i \right ) ! }
 $$
-
-\point{卡特兰数}
-
+\item 卡特兰数
 $$
 H_n
 = \frac{C (2 n, n)}{n + 1}
 = \frac{(4 n - 2) H_{n-1}}{n + 1}
 = C(2 n, n) - C (2 n, n - 1)
 $$
-
-\subsection{小球装盒问题}
-
-%\renewcommand{\arraystretch}{1.5}
+\item 小球装盒问题
 \begin{tabular}{|c|c|c|c|}
 	\hline
 	k 个球 & m 个盒子 & 允许有空 & 方案数 \\
@@ -549,10 +547,11 @@ $$
 	& & 否 & $ [x^k] \prod_{i=1}^{m} \frac{x ^ m}{1 - x ^ i} $ \\
 	\hline
 \end{tabular}
+\end{itemize}
 
 \subsection{FFT}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 using cp = complex<db>;
 // cp::real  cp::imag  std::conj  std::arg
 const db PI = acos(-1.L);
@@ -580,20 +579,20 @@ void idft(cp* a) {
 	dft(a); reverse(a+1, a+lim);
 	for (int i = 0; i < lim; i ++) a[i] /= lim;
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{FMT / 或卷积}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 void fmt(int* a) { // n = 1 << d
 	REP(i, 0, d-1) REP(j, 0, n-1) if (1<<i&j)
 		a[j] += a[j^(1<<i)];
 }// ifmt: a[j] -= a[j^(1<<i)];
-\end{lstlisting}
+\end{minted}
 
 \subsection{子集卷积}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 // n = 1 << d;
 // in: a/b[__builtin_popcount(i)][i];
 REP(i, 0, d) fmt(a[i]), fmt(b[i]);
@@ -601,11 +600,11 @@ REP(i, 0, n-1) REP(j, 0, d) REP(k, 0, d-j)
 	c[j+k][i] += 1ll * a[j][i] * b[k][i];
 REP(i, 0, d) ifmt(c[i]);
 // out: c[__builtin_popcount(i)][i]
-\end{lstlisting}
+\end{minted}
 
 \subsection{FWT}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 constexpr array<Mint, 4> OR1  = {    1,     0,     1,      1};
 constexpr array<Mint, 4> OR2  = {    1,     0,    -1,      1};
 constexpr array<Mint, 4> AND1 = {    1,     1,     0,      1};
@@ -623,13 +622,13 @@ constexpr void FWT(int n, Mint* a, array<Mint, 4> t) {
 		}
 	}
 }
-\end{lstlisting}
+\end{minted}
 
 \section{二维计算几何}
 
 \subsection{凸包}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 using pt = array<i64, 2>;
 pt operator+ (pt a, pt b) { return {a[0] + b[0], a[1] + b[1]}; }
 pt operator- (pt a, pt b) { return {a[0] - b[0], a[1] - b[1]}; }
@@ -660,13 +659,13 @@ vector<int> work(const vector<pt> &p) {
 	}
 	return st.resize(top), st;
 }
-\end{lstlisting}
+\end{minted}
 
 %\section{字符串}
 %
 %\subsection{manacher}
 %
-%\begin{lstlisting}
+%\begin{minted}{cpp}
 %void manacher(int sz) {
 %	int R = 0, mid = 0;
 %	REP(i, 1, sz-1) {
@@ -682,13 +681,13 @@ vector<int> work(const vector<pt> &p) {
 %^ . a . b . c . b . a . a . b . c . b . a . @
 %    2   2   6   2   2   2   2   6   2   2
 %*/
-%\end{lstlisting}
+%\end{minted}
 
 \section{数据结构}
 
 \subsection{区间加和树状数组}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 void Add(i64 p, i64 v) { // 后缀加
 	for (int x = p; x <= n; x += x&-x)
 		ta[x] += v, tb[x] += p * v;
@@ -698,7 +697,7 @@ i64 Query(i64 p, i64 ans = 0) { // 前缀求和
 		ans += (p+1) * ta[x] - tb[x];
 	return ans;
 } // [l, r] ==> Query(r) - Query(l-1);
-\end{lstlisting}
+\end{minted}
 
 \subsection{二维树状数组}
 
@@ -709,7 +708,7 @@ i64 Query(i64 p, i64 ans = 0) { // 前缀求和
 \item 前缀 $(1, 1) \sim (x, y)$ 求和：查询 $(x, y)$ 前缀和，结果分别乘 $(x \times y + x + y + 1)$、$(-y - 1)$、$(-x - 1)$、$1$ 并求和。
 \end{itemize}
 
-%\begin{lstlisting}
+%\begin{minted}{cpp}
 %struct T {
 %	int tr[N][N];
 %	void Add(int p, int q, int v) {
@@ -745,11 +744,11 @@ i64 Query(i64 p, i64 ans = 0) { // 前缀求和
 %	a --, b --;
 %	return Query(c, d) + Query(a, b) - Query(a, d) - Query(c, b);
 %}
-%\end{lstlisting}
+%\end{minted}
 
 \subsection{树状数组二分}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 // 最后一个 前缀和 <= k 的位置
 int select(int k) {
 	int x = 0, cur = 0;
@@ -758,11 +757,11 @@ int select(int k) {
 			x += i, cur = cur + tree[x];
 	return x;
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{单点修改线段树}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 struct Info { };
 Info operator+ (const Info &a, const Info &b) {}
 Info info[N<<2], init[N];
@@ -788,11 +787,11 @@ inline Info Query(int x, int l, int r, int L, int R) {
 	if (mid < L) return Query(x<<1|1, mid+1, r, L, R);
 	return Query(x<<1, l, mid, L, R) + Query(x<<1|1, mid+1, r, L, R);
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{区间修改懒标记线段树}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 struct Tag {
 	void apply(const Tag &t) {}
 	static Tag Id() {}
@@ -838,11 +837,11 @@ inline Info Query(int x, int l, int r, int L, int R) {
 	if (mid < L) return Query(x<<1|1, mid+1, r, L, R);
 	return Query(x<<1, l, mid, L, R) + Query(x<<1|1, mid+1, r, L, R);
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{ST表}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 int f[N+50][20], n;
 void Init() {
 	REP(i, 1, __lg(n)) REP(j, 1, n-(1<<i)+1)
@@ -852,11 +851,11 @@ int Get(int l, int r) {
 	int k = __lg(r-l+1);
 	return gcd(f[l][k], f[r-(1<<k)+1][k]);
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{FHQ \space Treap}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 struct Tr { int v, w, ls, rs, siz; } tr[N];
 inline void Pushup(int u) {  }
 inline void Pushdown(int u) {  }
@@ -880,11 +879,11 @@ void Split(int u, int siz, int &x, int &y) { // 按大小: siz | n-siz
 	else x = u, Split(tr[u].rs, siz - tr[tr[u].ls].siz - 1, tr[u].rs, y);
 	Pushup(u);
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{笛卡尔树}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 int lc[N], rc[N], s[N], n, p;
 void build () { // v: i ; w: a[i] ; root=rc[0]
 	for (int i = 1;i <= n;++i) { // 大根堆则是 <
@@ -892,11 +891,11 @@ void build () { // v: i ; w: a[i] ; root=rc[0]
 		lc[i] = rc[s[p]], rc[s[p]] = i, s[++p] = i;
 	}
 }
-\end{lstlisting}
+\end{minted}
 
 %\subsection{普通矩阵}
 %
-%\begin{lstlisting}
+%\begin{minted}{cpp}
 %template <size_t N, size_t M, typename T = i64>
 %using Mat = array<array<T, M>, N>;
 %
@@ -919,11 +918,11 @@ void build () { // v: i ; w: a[i] ; root=rc[0]
 %		res[i][k] += a[i][j] * b[j][k];
 %	return res;
 %}
-%\end{lstlisting}
+%\end{minted}
 
 %\subsection{(max, +)矩阵}
 %
-%\begin{lstlisting}
+%\begin{minted}{cpp}
 %template <typename Ty>
 %constexpr void chmax(Ty &a, Ty b) {
 %	if (b > a) a = b;
@@ -938,11 +937,11 @@ void build () { // v: i ; w: a[i] ; root=rc[0]
 %		chmax(res[i][k], a[i][j] + b[j][k]);
 %	return res;
 %}
-%\end{lstlisting}
+%\end{minted}
 
 \subsection{LCT}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 const int N = 2e5+10;
 int son[N][2], fa[N], rev[N], val[N], sum[N];
 bool get(int x, int p = 1) { return son[fa[x]][p] == x; }
@@ -994,7 +993,7 @@ void cut(int x, int y) {
 	if(find(y) == x && fa[y] == x && !son[y][0])
 		fa[y] = son[x][1] = 0, update(x);
 }
-\end{lstlisting}
+\end{minted}
 
 \section{图论}
 
@@ -1004,20 +1003,20 @@ $ a[x] - a[y] \leq w$ $\implies$ $y$ 向 $x$ 连长度为 $w$ 的有向边。
 
 \subsection{floyd}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 REP(k, 1, n) REP(x, 1, n) REP(y, 1, n) chmin(f[x][y], f[x][k] + f[k][y]);
-\end{lstlisting}
+\end{minted}
 
 \subsection{dinic}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 const i64 INF = 2e16L;
+struct Dinic {
 struct Node { int to; i64 cap, flow; };
-vector<Node> e; vector<int> cur, dis;
-vector<vector<int>> adj; int n;
-void init(int siz) {
-	n = siz; e.clear(); adj.assign(n+1, {});
-}
+int n; vector<Node> e;
+vector<int> cur, dis;
+vector<vector<int>> adj;
+Dinic(int siz) { n = siz; adj.assign(n+1, {}); }
 void add(int u, int v, i64 w) {
 	adj[u].push_back(e.size()); e.push_back({v, w, 0});
 	adj[v].push_back(e.size()); e.push_back({u, 0, 0});
@@ -1036,23 +1035,24 @@ int bfs(int s, int t) {
 }
 i64 dfs(int u, i64 flow, int t) {
 	if (u == t || !flow) return flow;
-	i64 tot = 0, res;
+	i64 sum = 0, res;
 	for (int &id = cur[u]; id < ssize(adj[u]); id ++) {
 		int i = adj[u][id];
 		if (dis[e[i].to] == dis[u] + 1 && (res = dfs(e[i].to, min(flow, e[i].cap - e[i].flow), t))) {
 			e[i].flow += res, e[i^1].flow -= res;
-			tot += res, flow -= res;
+			sum += res, flow -= res;
 			if (!flow) break;
 		}
 	}
-	return tot;
+	return sum;
 }
-i64 dinic(int s, int t) {
+i64 solve(int s, int t) {
 	i64 ans = 0;
 	for (; bfs(s, t); ) ans += dfs(s, INF, t);
 	return ans;
 }
-\end{lstlisting}
+};
+\end{minted}
 
 对于上下界最大流问题：
 
@@ -1066,7 +1066,7 @@ i64 dinic(int s, int t) {
 
 \subsection{费用流 (EK)}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 const i64 INF = 1e16L;
 using pr = pair<i64, int>;
 struct Node { int to; i64 vol, flow, cost; };
@@ -1119,7 +1119,7 @@ array<i64, 2> EK(int s, int t) {
 	}
 	return {F, C};
 }
-\end{lstlisting}
+\end{minted}
 
 对于有负边的费用流问题，先按照上下界的方式让负边满流。
 
@@ -1127,7 +1127,7 @@ array<i64, 2> EK(int s, int t) {
 
 \subsection{tarjan(强联通分量)}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 int dfn[N], low[N], bel[N], st[N], top, cnt, tms;
 vector<int> adj[N], scc[N];
 void tarjan(int u) {
@@ -1142,11 +1142,11 @@ void tarjan(int u) {
 		while (z != u);
 	}
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{tarjan(边双)}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 vector<int> bcc[N];
 int dfn[N], low[N], st[N], bel[N], top, cnt, tms;
 void tarjan(int u, int in) {
@@ -1162,11 +1162,11 @@ void tarjan(int u, int in) {
 		while (z != u);
 	}
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{tarjan(点双)}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 int dfn[N], low[N], st[N], cut[N], top, tms, cnt;
 vector<int> adj[N], bcc[N];
 void tarjan(int u, int fa) {
@@ -1186,19 +1186,19 @@ void tarjan(int u, int fa) {
 	}
 	if (!fa && !ch) bcc[++cnt] = {u}; // 特判独立点
 }
-\end{lstlisting}
+\end{minted}
 
 \section{Misc}
 
 \subsection{cout精度}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 cout.setf(ios::fixed); cout.precision(15);
-\end{lstlisting}
+\end{minted}
 
 %\subsection{int128 输入输出}
 %
-%\begin{lstlisting}
+%\begin{minted}{cpp}
 %istream& operator>>(istream& cin, i128& x) {
 %	i128 w = 1, v = 0;
 %	string s; cin >> s;
@@ -1216,22 +1216,22 @@ cout.setf(ios::fixed); cout.precision(15);
 %	reverse(s.begin(), s.end());
 %	return cout << s;
 %}
-%\end{lstlisting}
+%\end{minted}
 
 \subsection{上取整下取整}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 i64 ceilDiv(i64 n, i64 m) { // m > 0
 	return n >= 0 ? (n + m - 1) / m : n / m;
 }
 i64 floorDiv(i64 n, i64 m) { // m > 0
 	return n >= 0 ? n / m : (n - m + 1) / m;
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{mmap映射stdin}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -1239,24 +1239,24 @@ i64 floorDiv(i64 n, i64 m) { // m > 0
 int fd = 0; // 0 为 stdin  // int fd = open("*.in", O_RDONLY);
 struct stat state; fstat(fd, &state); int len = state.st_size;
 char* addr = (char*) mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
-\end{lstlisting}
+\end{minted}
 
 \subsection{read()}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 int read() { // 换成 getchar_unlocked 可加快速度
 	int x = 0, w = 1, ch = getchar();
 	for (; !isdigit(ch); ch = getchar()) if (ch == '-') w = -1;
 	for (; isdigit(ch); ch = getchar()) x = x * 10 + ch - '0';
 	return x * w;
 }
-\end{lstlisting}
+\end{minted}
 
 \subsection{随机相关}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 mt19937 rnd(chrono::system_clock::now().time_since_epoch().count());
-\end{lstlisting}
+\end{minted}
 
 \subsection{\_\_builtin\_xxx}
 
@@ -1274,13 +1274,13 @@ mt19937 rnd(chrono::system_clock::now().time_since_epoch().count());
 
 \texttt{\_\_builtin\_bswap64(x)}：对 \texttt{u64} 进行字节反转。
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 u64 y = __builtin_bswap64(0xaabbccddeeff1122ULL); // y的值为0x2211ffeeddccbbaa
-\end{lstlisting}
+\end{minted}
 
 \subsection{遍历 n 选 m 的方案}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 struct Comb { // for (auto i : Comb(n, m))
 	int n, m; // 1 <= n && n <= 64 && 1 <= m && m <= n
 	struct iterator {
@@ -1295,22 +1295,20 @@ struct Comb { // for (auto i : Comb(n, m))
 	iterator begin() const { return iterator{(1ULL << m) - 1}; }
 	iterator end() const { return ++(iterator{((1ULL << m) - 1) << (n - m)}); }
 };
-\end{lstlisting}
+\end{minted}
 
 \subsection{<ext/pbds/>}
 
-\point{哈希表}
-
-\begin{lstlisting}
+\begin{itemize}
+\item 哈希表
+\begin{minted}{cpp}
 #include<ext/pb_ds/assoc_container.hpp>
 #include<ext/pb_ds/hash_policy.hpp>
 __gnu_pbds::gp_hash_table<int, int> mp1; // 拉链法
 __gnu_pbds::cc_hash_table<int, int> mp2; // 探测法
-\end{lstlisting}
-
-\point{平衡树}
-
-\begin{lstlisting}
+\end{minted}
+\item 平衡树
+\begin{minted}{cpp}
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 template<class T, class TT = __gnu_pbds::null_type>
@@ -1321,13 +1319,12 @@ using ordered_set = __gnu_pbds::tree<
 	// splay_tree_tag splay树
 	__gnu_pbds::tree_order_statistics_node_update
 >;
-\end{lstlisting}
-
+\end{minted}
 \texttt{order\_of\_key(x)}  返回比 $x$ 小的数的数量。
 
 \texttt{find\_by\_order(x)}  返回排名 $x$ 所对应元素的迭代器。
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 ordered_set<int> s;
 s.insert(...); // 1, 3, 5, 7, 11
 REP(i, 0, 6) cout << *s.find_by_order(i) << " "; cout << "\n";
@@ -1335,15 +1332,13 @@ REP(i, 0, 6) cout << *s.find_by_order(i) << " "; cout << "\n";
 REP(i, 0, 12) cout << s.order_of_key(i) << " "; cout << "\n";
 // 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5
 //   (1)   (3)   (5)   (7)         (11)
-\end{lstlisting}
+\end{minted}
 
 \texttt{split(x,b)} 按照 $x$ 分裂，小于等于 $x$ 的属于当前树，其余的属于 $b$ 树。
 
 \texttt{join(x)} 将两颗树合并。前提是两者值域没有交集。
-
-\point{可并堆}
-
-\begin{lstlisting}
+\item 可并堆
+\begin{minted}{cpp}
 __gnu_pbds::priority_queue<int, less<int>, // 小根堆用 greater
 	__gnu_pbds::pairing_heap_tag> q;
 //     pairing_heap_tag     配对堆
@@ -1351,13 +1346,13 @@ __gnu_pbds::priority_queue<int, less<int>, // 小根堆用 greater
 //     rc_binomial_heap_tag 冗余计数二项堆
 //     binary_heap_tag      二叉堆
 //     thin_heap_tag        斐波那契堆
-\end{lstlisting}
+\end{minted}
 
 \texttt{a.join(b)}: 把优先队列 $b$ 合并进 $a$ 并把 $b$ 清空
 
-\point{rope}
+\item rope
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 #include <ext/rope>
 __gnu_cxx::rope<char> rp = "1234";
 rp.append("abcd");       // 1234abcd
@@ -1366,7 +1361,8 @@ rp.replace(3, 2, "***"); // 123***bcd$
 rp.append(4, ';');       // 123***bcd$;;;;
 rp.erase(2, 3);          // 12*bcd$;;;;
 rp.insert(6, 3, '!');    // 12*bcd!!!$;;;;
-\end{lstlisting}
+\end{minted}
+\end{itemize}
 
 \subsection{时间相关}
 
@@ -1376,12 +1372,12 @@ rp.insert(6, 3, '!');    // 12*bcd!!!$;;;;
 
 \subsection{火车头精简版}
 
-\begin{lstlisting}[]
+\begin{minted}{cpp}
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.1,sse4.2,sse4a,abm,avx,avx2,avx512f,prefer-vector-width=512,tune=native")
 #pragma GCC optimize("inline")
-\end{lstlisting}
+\end{minted}
 
 %\subsection{导数积分}
 %
@@ -1483,11 +1479,18 @@ $$
 
 \subsection{bashrc}
 
-\begin{lstlisting}[language=sh]
+\begin{minted}{sh}
 mk() { local F="$1" ; shift ; g++ "$F.cpp" -o "$F" "$@"; }
+hash() {
+cpp -fpreprocessed -P "$1" | python3 -c '
+import hashlib, re, sys
+for i in sys.stdin.readlines():
+    print(hashlib.md5(re.sub(r"\s", "", i).encode()).hexdigest()[:4], i[:-1])
+'
+}
 ulimit -s 1048576
 ulimit -v 1048576
-\end{lstlisting}
+\end{minted}
 
 \subsection{编译参数}
 
@@ -1499,35 +1502,35 @@ ulimit -v 1048576
 
 \subsection{Xor \space Shift}
 
-\begin{lstlisting}
+\begin{minted}{cpp}
 u64 xorshift(u64 x) { return x^=x<<13, x^=x>>7, x^=x<<17, x; }
 u32 xorshift(u32 x) { return x^=x<<13, x^=x>>17, x^=x<<5, x; }
-\end{lstlisting}
+\end{minted}
 
 \subsection{python Decimal}
 
-\begin{lstlisting}[language=python]
+\begin{minted}{py}
 from decimal import Decimal, getcontext, localcontext
 getcontext().prec = 1000 # 全局环境 精度为 1000
 with localcontext() as ctx:
 	ctx.prec = 1000 # 临时环境
 a = Decimal("1.14514") # a.sqrt(), a.ln(), a.exp(), ...
-\end{lstlisting}
+\end{minted}
 
 \subsection{python Fractions}
 
-\begin{lstlisting}[language=python]
+\begin{minted}{py}
 from fractions import Fraction
 a = Fraction(3, 4)    # 3/4
 print(f.numerator, f.denominator) # 3 4
 # 找到最接近的分数，分母不超过指定值
 Fraction('3.1415926535897932').limit_denominator(10)  # 22/7
 Fraction('3.1415926535897932').limit_denominator(100)  # 311/99
-\end{lstlisting}
+\end{minted}
 
 \subsection{浮点数 cmp (对拍用)}
 
-\begin{lstlisting}[language=python]
+\begin{minted}{py}
 import sys # 用法: python ./cmp.py ./a.out ./a.ans
 get = lambda name : [float(i) for i in open(name, 'r').read().split()]
 if __name__ == "__main__":
@@ -1535,7 +1538,7 @@ if __name__ == "__main__":
 	assert len(a) == len(b)
 	for x, y, i in zip(a, b, range(len(a))):
 		assert abs(x - y) / max(1, abs(y)) <= 1E-4, f"Wrong at {i+1}-th"
-\end{lstlisting}
+\end{minted}
 
 %\subsection{质数表}
 %
@@ -1580,9 +1583,9 @@ if __name__ == "__main__":
 
 %\subsection{}
 %
-%\begin{lstlisting}
+%\begin{minted}{cpp}
 %
-%\end{lstlisting}
+%\end{minted}
 
 
 \end{document}
