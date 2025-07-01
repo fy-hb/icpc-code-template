@@ -1,17 +1,18 @@
-SRCS=$(shell find template/)
+TEMPLATES=$(shell find template/)
 
-build/main.pdf: $(SRCS) makefile sections.yaml clean
-	mkdir -p build/
-	cp template/fa-github.svg build/
+all: build/main.pdf
+
+build/main.pdf: $(TEMPLATES) makefile sections.yaml doall.py clean | build/
 	python doall.py > build/main.tex
+	cp template/fa-github.pdf build/
 	cd build && xelatex -synctex=1 -shell-escape -8bit -interaction=nonstopmode main.tex
 	cd build && xelatex -synctex=1 -shell-escape -8bit -interaction=nonstopmode main.tex
 	cd build && xelatex -synctex=1 -shell-escape -8bit -interaction=nonstopmode main.tex
 
-
-.PHONY: clean check
-check:
-	true # code valid check
+build/:
+	mkdir -p build
 
 clean:
 	rm -rf build/
+
+.PHONY: all clean
