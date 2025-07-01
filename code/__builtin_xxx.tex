@@ -1,16 +1,17 @@
-\texttt{\_\_builtin\_popcount{\color{red}{ll}}(x)}：\texttt{u32{\color{red}{/u64}}} 中 $1$ 的个数。
 
-\texttt{\_\_builtin\_clz{\color{red}{ll}}(x)}：\texttt{u32{\color{red}{/u64}}} 最高位开始连续 $0$ 的个数。
+\mintinline{text}|__builtin_popcount@{\color{red}{ll}}@(x)|：\mintinline{text}|u32@{\color{red}{/u64}}@| 中 $1$ 的个数。
 
-\texttt{\_\_builtin\_ctz{\color{red}{ll}}(x)}：\texttt{u32{\color{red}{/u64}}} 最低位开始连续 $0$ 的个数。
+\mintinline{text}|__builtin_clz@{\color{red}{ll}}@(x)|：\mintinline{text}|u32@{\color{red}{/u64}}@| 最高位开始连续 $0$ 的个数。
 
-\texttt{\_\_builtin\_parity{\color{red}{ll}}(x)}：\texttt{\_\_builtin\_popcount{\color{red}{ll}}(x) \& 1}
+\mintinline{text}|__builtin_ctz@{\color{red}{ll}}@(x)|：\mintinline{text}|u32@{\color{red}{/u64}}@| 最低位开始连续 $0$ 的个数。
 
-\texttt{\_\_builtin\_bswap16(x)}：对 \texttt{u16} 进行字节反转。
+\mintinline{text}|__builtin_parity@{\color{red}{ll}}@(x)|：\mintinline{cpp}|__builtin_popcount@{\color{red}{ll}}@(x) & 1|
 
-\texttt{\_\_builtin\_bswap32(x)}：对 \texttt{u32} 进行字节反转。
+\mintinline{text}|__builtin_bswap16(x)|：对 \mintinline{text}|u16| 进行字节反转。
 
-\texttt{\_\_builtin\_bswap64(x)}：对 \texttt{u64} 进行字节反转。
+\mintinline{text}|__builtin_bswap32(x)|：对 \mintinline{text}|u32| 进行字节反转。
+
+\mintinline{text}|__builtin_bswap64(x)|：对 \mintinline{text}|u64| 进行字节反转。
 
 \begin{minted}{cpp}
 u64 y = __builtin_bswap64(0xaabbccddeeff1122ULL); // y的值为0x2211ffeeddccbbaa

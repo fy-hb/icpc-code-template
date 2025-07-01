@@ -1,4 +1,4 @@
-\documentclass[a4paper,landscape,twocolumn]{ctexart}
+\documentclass[a4paper,landscape,twocolumn,10pt]{ctexart}
 \usepackage[Glenn]{fncychap}
 \usepackage{xcolor}
 \usepackage{verbatim}
@@ -6,8 +6,6 @@
 \usepackage{fancyhdr}
 \usepackage{multicol}
 \usepackage{multirow}
-\usepackage{lastpage}
-\usepackage{ctex}
 \usepackage{relsize}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -19,6 +17,7 @@
 \usepackage{etoolbox}
 \usepackage{xstring}
 \usepackage{hyperref}
+\usepackage{lastpage}
 \usepackage{enumitem}
 
 %\setmainfont{LXGW WenKai}
@@ -88,7 +87,10 @@
 	extrakeywordstype={i64,u64,i32,u32,array,set,vector,*,...},
 }
 
-\setmintedinline{bgcolor={}}
+\setmintedinline{
+	bgcolor={},
+	escapeinside=@@,
+}
 \usemintedstyle{xcode}
 
 

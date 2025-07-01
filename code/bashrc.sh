@@ -8,3 +8,4 @@ for i in sys.stdin.readlines():
 }
 ulimit -s 1048576
 ulimit -v 1048576
+export CXXFLAGS='-g -Wall -Wextra -fsanitize=address,undefined -std=c++20'
