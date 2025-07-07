@@ -22,4 +22,4 @@ constexpr Mint operator++ (Mint &a, int) { auto b = a; return a += 1, b; }
 constexpr Mint operator-- (Mint &a, int) { auto b = a; return a -= 1, b; }
 template <typename S> S& operator<< (S &s, Mint a) { return s << a.val; }
 constexpr bool operator== (Mint a, Mint b) { return a.val == b.val; }
-constexpr Mint operator "" _M (unsigned long long x) { return x % mod; }
+constexpr Mint operator""_M (unsigned long long x) { return x % mod; }

@@ -34,6 +34,10 @@
       file: 子集卷积.cpp
     - name: FWT
       file: FWT.cpp
+- name: 字符串
+  subs:
+    - name: AC自动机
+      file: AC自动机.cpp
 - name: 二维计算几何
   subs:
     - name: 凸包
