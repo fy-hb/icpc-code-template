@@ -1,5 +1,5 @@
-istream& operator>>(istream& cin, i128& x) {
-	i128 w = 1, v = 0;
+istream& operator>>(istream& cin, __int128& x) {
+	__int128 w = 1, v = 0;
 	string s; cin >> s;
 	for (auto i : s) {
 		if (i == '-') w = -1;
@@ -7,7 +7,7 @@ istream& operator>>(istream& cin, i128& x) {
 	}
    return x = w * v, cin;
 }
-ostream& operator<<(ostream& cout, i128 x) {
+ostream& operator<<(ostream& cout, __int128 x) {
 	if (x == 0) return cout << 0;
 	if (x < 0) cout << '-', x = -x;
 	string s;
