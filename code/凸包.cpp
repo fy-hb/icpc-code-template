@@ -1,12 +1,12 @@
-using pt = array<i64, 2>;
-pt operator+ (pt a, pt b) { return {a[0] + b[0], a[1] + b[1]}; }
-pt operator- (pt a) { return {-a[0], -a[1]}; }
-pt operator- (pt a, pt b) { return a + (-b); }
-i64 operator* (pt a, pt b) { return a[0] * b[0] + a[1] * b[1]; }
-i64 operator^ (pt a, pt b) { return a[0] * b[1] - a[1] * b[0]; }
-db abs(pt a) { return __builtin_hypot(a[0], a[1]); }
-i64 sq(pt a) { return a[0] * a[0] + a[1] * a[1]; }
-int check(pt x, pt y, pt z) { return ((y - x) ^ (y - z)) < 0; }
+using P = array<i64, 2>;
+P operator+ (P a, P b) { return {a[0] + b[0], a[1] + b[1]}; }
+P operator- (P a) { return {-a[0], -a[1]}; }
+P operator- (P a, P b) { return a + (-b); }
+__int128 operator* (P a, P b) { return __int128(a[0]) * b[0] + __int128(a[1]) * b[1]; }
+__int128 operator^ (P a, P b) { return __int128(a[0]) * b[1] - __int128(a[1]) * b[0]; }
+db abs(P a) { return __builtin_hypotl(a[0], a[1]); }
+__int128 sq(P a) { return a * a; }
+int check(P x, P y, P z) { return ((y - x) ^ (y - z)) < 0; }
 vector<int> work(const vector<P> &p) {
 	if (!p.size()) return {};
 	int n = p.size(), top = -1;
