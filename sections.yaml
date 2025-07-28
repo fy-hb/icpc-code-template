@@ -38,6 +38,8 @@
   subs:
     - name: AC自动机
       file: AC自动机.cpp
+    - name: Lyndon分解
+      file: Lyndon分解.cpp
 - name: 二维计算几何
   subs:
     - name: 凸包
