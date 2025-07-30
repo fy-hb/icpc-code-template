@@ -4,7 +4,7 @@ void tarjan(int u, int in) {
 	low[u] = dfn[u] = ++tms, st[++top] = u;
 	for (auto [v, id] : adj[u]) {
 		if (id == in) continue;
-		if (!dfn[v]) tarjan(v, id); chmin(low[u], low[v]);
+		if (!dfn[v]) tarjan(v, id), chmin(low[u], low[v]);
 		else chmin(low[u], dfn[v]);
 	}
 	if (dfn[u] == low[u]) {
