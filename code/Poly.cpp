@@ -1,115 +1,148 @@
-constexpr int mod = 998'244'353;
-constexpr int qpow(int x, int y, int m = mod, int ans = 1) {
-	for (; y; y >>= 1, x = (u64) x * x % m)
-		if (y & 1) ans = (u64) ans * x % m;
+template <typename T>
+constexpr T qpow(T x, u64 y, u32 mod) {
+	T ans = 1;
+	for (; y; y >>= 1, x = u64(x) * x % mod)
+		if (y & 1) ans = u64(ans) * x % mod;
 	return ans;
 }
-using P = vector<int>;
-vector<int> rev, wn;
-int lim, invlim;
-void init(int n) {
-	lim = max(2 << __lg(n - 1), 1);
-	invlim = mod - (mod - 1) / lim;
-	if (lim > wn.size()) wn.resize(lim);
-	rev.resize(lim);
-	for (static int i = 1; i < lim; i <<= 1) {
-		int w = qpow(3, mod / i / 2), cur = 1;
-		for (int j = 0; j < i; j ++)
-			wn[i+j] = cur, cur = (u64) cur * w % mod;
+#define S (*this)
+template <u32 mod, u32 root>
+struct Poly : vector<Mint<mod>> {
+	using Z = Mint<mod>;
+	constexpr Poly (auto ...x) : vector<Z>(x...) {}
+	constexpr Poly (initializer_list<Z> x) : vector<Z>(x) {}
+	static int lim, invlim;
+	static vector<Z> wn;
+	static vector<int> rev;
+	static constexpr void init(int n) {
+		lim = n > 1 ? (2 << __lg(n - 1)) : 1;
+		invlim = mod - (mod - 1) / lim;
+		wn.resize(lim), rev.resize(lim);
+		for (int i = 1; i < lim; i <<= 1) {
+			Z w = Z(root).pow(mod / i / 2), cur = 1;
+			REP(j, 0, i-1) wn[i+j] = cur, cur *= w;
+		}
+		REP(i, 1, lim-1) rev[i] = rev[i>>1] >> 1 | (i&1 ? lim>>1 : 0);
 	}
-	REP(i, 1, lim-1) rev[i] = rev[i>>1] >> 1 | (i&1 ? lim>>1 : 0);
-}
-P trunc(const P &a, int siz) {
-	if (siz <= a.size()) return P(a.begin(), a.begin() + siz);
-	P res = a; res.resize(siz); return res;
-}
-P reverse(const P &v) { return P(v.rbegin(), v.rend()); }
-P dft(const P &a) {
-	static vector<u64> tmp;
-	tmp.assign(lim, 0);
-	REP(i, 0, a.size()-1) tmp[rev[i]] = a[i];
-	for (int i = 1; i < lim; i <<= 1) {
-		for (int k = i & (1 << 19); k--; )
-			if (tmp[k] >= mod * 9ull) tmp[k] -= mod * 9ull;
-		for (int j = 0; j < lim; j += 2 * i)
-			for (int k = 0; k < i; k ++) {
-				const u64 x = (u64) tmp[i+j+k] * wn[i+k] % mod;
-				tmp[i+j+k] = tmp[k+j] + mod - x; tmp[k+j] += x;
-			}
+	constexpr void dft() {
+		S.resize(lim);
+		REP(i, 0, lim-1) if (i < rev[i]) ::swap(S[i], S[rev[i]]);
+		for (int i = 1; i < lim; i <<= 1)
+			for (int j = 0; j < lim; j += 2 * i)
+				for (int k = 0; k < i; k ++) {
+					auto x = S[i+j+k] * wn[i+k];
+					S[i+j+k] = S[k+j] - x; S[k+j] += x;
+				}
 	}
-	REP(i, 0, lim-1) tmp[i] %= mod;
-	return P(tmp.begin(), tmp.end());
-}
-P idft(const P &a) {
-	auto b = dft(a); reverse(b.begin()+1, b.end());
-	for (auto &i : b) i = (u64) i * invlim % mod;
-	return b;
-}
-P operator- (const P &a) {
-	P c = a;
-	for (auto &i : c) i = i ? mod - i : 0;
-	return c;
-}
-P operator+ (const P &a, const P &b) {
-	P c(max(a.size(), b.size()));
-	REP(i, 0, a.size()-1) c[i] += a[i];
-	REP(i, 0, b.size()-1) c[i] += b[i], c[i] >= mod && (c[i] -= mod);
-	return c;
-}
-P operator- (const P &a, const P &b) {
-	return a + (-b);
-}
-P operator* (const P &a, const P &b) {
-	assert(a.size() && b.size());
-	int l = a.size() + b.size() - 1;
-	init(l);
-	auto c = dft(a), d = dft(b);
-	REP(i, 0, lim-1) c[i] = (u64) c[i] * d[i] % mod;
-	auto res = idft(c);
-	return trunc(res, l);
-}
-P operator* (const P &a, int b) {
-	auto x = trunc(a, a.size());
-	for (auto &i : x) i = (u64) i * b % mod;
-	return x;
-}
-P inv(const P &a) { // inv(a) (mod x^n)
-	int n = a.size();
-	P x = {qpow(a[0], mod-2)};
-	for (int t = 2; t < 2 * n; t <<= 1)
-		x = trunc((P {2} - trunc(a, t) * x) * x, t);
-	return trunc(x, n);
-}
-pair<P, P> div(const P &f, const P &g) { // f = g * q + r
-	int n = f.size(), m = g.size();
-	auto q = reverse(trunc(reverse(f) * inv(trunc(reverse(g), n-m+1)), n-m+1));
-	auto r = trunc(f - g * q, m - 1);
-	return {q, r};
-}
-P sqrt(const P &a) { // sqrt(a) (mod x^n);
-	P b {res2(a[0], mod)[0]};
-	if (b[0] < 0) return {};
-	int n = a.size();
-	for (int t = 2; t < 2 * n; t <<= 1)
-		b = trunc((trunc(a, t) + b * b) * inv(trunc(b * 2, t)), t);
-	return trunc(b, n);
-}
-P deriv(const P &a) {
-	int n = a.size(); if (!n) return {}; P res(n - 1);
-	REP(i, 0, n-2) res[i] = (u64) a[i + 1] * (i + 1) % mod;
-	return res;
-}
-P integr(const P &a) {
-	int n = a.size(); P res(n + 1);
-	REP(i, 1, n) res[i] = (u64) a[i - 1] * qpow(i, mod-2, mod) % mod;
-	return res;
-}
-P log(const P &a) {
-	return trunc(integr(deriv(a) * inv(a)), a.size());
-}
-P exp(const P &a) {
-	int n = a.size(); P b {1};
-	for (int t = 2; t < 2 * n; t <<= 1)
-		b = trunc(b * (P {1} - log(trunc(b, t)) + trunc(a, t)), t);
-	return trunc(b, n);
-}
+	constexpr void idft() {
+		dft(), ::reverse(S.begin()+1, S.end());
+		for (auto &i : S) i *= invlim;
+	}
+	constexpr friend Poly operator* (Poly a, Poly b) {
+		assert(a.size() && b.size());
+		int l = a.size() + b.size() - 1;
+		init(l), a.dft(), b.dft();
+		REP(i, 0, lim-1) a[i] *= b[i];
+		return a.idft(), a.trunc(l);
+	}
+	constexpr friend Poly& operator*= (Poly &a, Z x) {
+		for (auto &i : a) i *= x; return a;
+	}
+	constexpr friend Poly operator* (Poly a, Z x) {
+		auto b = a; return b *= x, b;
+	}
+	constexpr friend Poly operator- (const Poly &a) {
+		auto b = a;
+		for (auto &i : b) i = -i;
+		return b;
+	}
+	constexpr friend Poly& operator+= (Poly &a, const Poly &b) {
+		if (ssize(b) > ssize(a)) a.resize(ssize(b));
+		REP(i, 0, ssize(b)-1) a[i] += b[i];
+		return a;
+	}
+	constexpr friend Poly& operator-= (Poly &a, const Poly &b) {
+		return a += (-b);
+	}
+	constexpr friend Poly operator+ (const Poly &a, const Poly &b) {
+		auto c = a; return c += b;
+	}
+	constexpr friend Poly operator- (const Poly &a, const Poly &b) {
+		return a + (-b);
+	}
+	constexpr Poly rsh(int k) const {
+		Poly res(max<int>(ssize(S) + k, 0), 0);
+		REP(i, max(0, -k), ssize(S) - 1) res[i + k] = S[i];
+		return res;
+	}
+	constexpr Poly trunc(int siz) const {
+		if (siz <= S.size()) return Poly(S.begin(), S.begin() + siz);
+		Poly t = S; t.resize(siz); return t;
+	}
+	constexpr Poly reverse() const {
+		return Poly(S.rbegin(), S.rend());
+	}
+	constexpr Poly deriv() const {
+		Poly res(max<int>(1, ssize(S) - 1));
+		REP(i, 1, ssize(S)-1) res[i-1] = S[i] * i;
+		return res;
+	}
+	constexpr Poly integr() const {
+		Poly res(ssize(S) + 1);
+		REP(i, 0, ssize(S)-1) res[i+1] = S[i] / (i+1);
+		return res;
+	}
+	constexpr Poly inv(int n) const { // inv(a) (mod x^n)
+		Poly x = {1 / S[0]};
+		for (int t = 2; t < 2*n; t <<= 1) {
+			x = (x * (Poly {2} - S.trunc(t) * x)).trunc(t);
+		}
+		return x.trunc(n);
+	}
+	static constexpr pair<Poly, Poly> div(const Poly &a, const Poly &b) {
+		int n = ssize(a), m = ssize(b);
+		auto q = (b.reverse().inv(n-m+1) * a.reverse()).trunc(n-m+1);
+		return {q, (a - b * q).trunc(m - 1)};
+	}
+	constexpr Poly log(int n) const {
+		return (S.deriv() * S.inv(n)).integr().trunc(n);
+	}
+	constexpr Poly exp(int n) const {
+		Poly x = {1};
+		for (int t = 2; t < 2 * n; t <<= 1) {
+			x = (x * (Poly{1} - x.log(t) + S.trunc(t))).trunc(t);
+		}
+		return x.trunc(n);
+	}
+	constexpr Poly pow(u64 k, int n) const { // a^k (mod x^n)
+		if (!k) return (Poly {1}).trunc(n);
+		int i = 0;
+		while (i < ssize(S) && S[i].val == 0) i ++;
+		if (i == ssize(S) || i && k >= n || k * i >= n) return Poly(n);
+		Z v = S[i];
+		auto f = S.rsh(-i) * (1 / v);
+		return (f.log(n - i * k) * Z(k)).exp(n - i * k).rsh(i * k) * v.pow(k);
+	}
+	Poly sqrt(int n) const {
+		int i = 0;
+		while (i < ssize(S) && S[i].val == 0) i ++;
+		if (i == n) return Poly(n);
+		if (i & 1) return {};
+		auto a = S.rsh(-i);
+		auto res = res2(a[0].val, mod);
+		if (res.first == -1) return {};
+		Poly x {res.first};
+		for (int t = 2; t < 2 * (n - i / 2); t <<= 1) {
+			x = (x + (a.trunc(t) * x.inv(t)).trunc(t)) * (Z(1) / 2);
+		}
+		return x.trunc(n - i / 2).rsh(i / 2);
+	}
+};
+#undef S
+
+template <u32 mod, u32 g> int Poly<mod, g>::lim;
+template <u32 mod, u32 g> int Poly<mod, g>::invlim;
+template <u32 mod, u32 g> vector<Mint<mod>> Poly<mod, g>::wn;
+template <u32 mod, u32 g> vector<int> Poly<mod, g>::rev;
+
+using P = Poly<998244353, 3>;
