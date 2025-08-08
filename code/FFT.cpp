@@ -1,12 +1,12 @@
 using cp = complex<db>;
 // cp::real  cp::imag  std::conj  std::arg
 const db PI = acos(-1.L);
-int rev[N], lim; cp wn[N];
+int rev[N], lim; cp w[N];
 void init(int siz) {
 	lim = 2 << __lg(siz - 1);
 	for (static int i = 1; i < lim; i <<= 1)
 		for (int j = 0; j < i; j ++)
-			wn[i+j] = polar(1.L, db(j) / db(i) * PI);
+			w[i+j] = polar(1.L, db(j) / db(i) * PI);
 	for (int i = 1; i < lim; i ++)
 		rev[i] = rev[i>>1] >> 1 | (i & 1 ? lim >> 1 : 0);
 }
