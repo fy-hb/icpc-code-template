@@ -33,3 +33,13 @@ i64 PR(i64 p) { // p > 1 && not prime
 	}
 	return gcd(pp, p);
 }
+vector<i64> getfac(i64 x) {
+	if (x == 1) return {};
+	vector<i64> ans;
+	auto f = [&] (auto &&self, i64 x) -> void {
+		if (MR(x)) return ans.push_back(x);
+		auto y = PR(x);
+		self(self, y); self(self, x / y);
+	};
+	return f(f, x), ans;
+}
