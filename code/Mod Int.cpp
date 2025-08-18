@@ -11,7 +11,7 @@ struct Mint {
 	constexpr Mint () = default;
 	constexpr Mint (auto x) : val(norm(x, mod)) { }
 	static constexpr u32 norm(auto x, u32 m) {
-		return x%=int(m), x<0&&(x+=m), x;
+		return x%=int(m), (x<0)&&(x+=m), x;
 	}
 	constexpr Mint pow(auto b) {
 		return val ? qpow(*this, norm(b, mod-1)) : 0;
