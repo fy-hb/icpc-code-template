@@ -1,4 +1,5 @@
 - name: 数论
+  folder: 数论
   subs:
     - name: ExGcd
       file: ExGcd.cpp
@@ -11,17 +12,16 @@
     - name: 常见数论函数
       file: 常见数论函数.tex
     - name: Miller–Rabin+Pollard-rho
-      file: Miller–Rabin + Pollard-rho.cpp
+      file: Miller–Rabin+Pollard-rho.cpp
     - name: Mod Int
       file: Mod Int.cpp
     - name: 二次剩余
       file: 二次剩余.cpp
-    - name: Poly
-      file: Poly.cpp
 - name: 数学
+  folder: 数学
   subs:
-    - name: 素勾股数
-      file: 素勾股数.cpp
+    - name: Pythagorean triples tree
+      file: Pythagorean triples tree.cpp
     - name: 组合数
       file: 组合数.cpp
     - name: 组合数学相关
@@ -34,17 +34,28 @@
       file: 子集卷积.cpp
     - name: FWT
       file: FWT.cpp
+    - name: Poly
+      file: Poly.cpp
+    - name: STL积分/求和
+      file: STL积分求和.tex
+    - name: 其他公式
+      file: 其他公式.tex
+    - name: Nim积
+      file: Nim积.cpp
 - name: 字符串
+  folder: 字符串
   subs:
     - name: AC自动机
       file: AC自动机.cpp
     - name: Lyndon分解
       file: Lyndon分解.cpp
-- name: 二维计算几何
+- name: 计算几何
+  folder: 计算几何
   subs:
     - name: 凸包
       file: 凸包.cpp
 - name: 数据结构
+  folder: 数据结构
   subs:
     - name: 区间加和树状数组
       file: 区间加和树状数组.cpp
@@ -65,9 +76,12 @@
     - name: LCT
       file: LCT.cpp
 - name: 图论
+  folder: 图论
   subs:
     - name: 差分约束
       file: 差分约束.tex
+    - name: 无向图欧拉回路
+      file: 无向图欧拉回路.cpp
     - name: floyd
       file: floyd.cpp
     - name: dinic
@@ -80,14 +94,17 @@
       file: tarjan(边双).cpp
     - name: tarjan(点双)
       file: tarjan(点双).cpp
+    - name: 边三联通分量
+      file: 边三联通分量.cpp
 - name: Misc
+  folder: Misc
   subs:
-    - name: cout精度
-      file: cout精度.cpp
+    - name: cout.precision
+      file: cout.precision.cpp
     - name: 上下取整
       file: 上下取整.cpp
-    - name: mmap映射stdin
-      file: mmap映射stdin.cpp
+    - name: mmap
+      file: mmap.cpp
     - name: read()
       file: read().cpp
     - name: 随机
@@ -98,14 +115,10 @@
       file: Gosper's hack.cpp
     - name: <ext/pbds/>
       file: pbds.tex
-    - name: 时间相关
-      file: 时间相关.tex
-    - name: 火车头精简版
-      file: 火车头精简版.cpp
-    - name: STL积分/求和
-      file: STL积分求和.tex
-    - name: 其他公式
-      file: 其他公式.tex
+    - name: 日期时间
+      file: 日期时间.cpp
+    - name: 火车头
+      file: 火车头.cpp
     - name: bashrc
       file: bashrc.sh
     - name: 编译参数

@@ -27,6 +27,8 @@ if __name__ == "__main__":
         print("\\section{{{0}}}".format(escape(section["name"])))
         print()
 
+        folder_name = section["folder"]
+
         for part in section["subs"]:
             print("\\subsection{{{0}}}".format(escape(part["name"])))
 
@@ -37,7 +39,7 @@ if __name__ == "__main__":
 
             for file_name in lists:
                 lang = file_name.split(".")[-1]
-                with open(f"code/{file_name}", "r", encoding="UTF-8") as file:
+                with open(f"code/{folder_name}/{file_name}", "r", encoding="UTF-8") as file:
                     code = file.read()
                 hashes = []
 
