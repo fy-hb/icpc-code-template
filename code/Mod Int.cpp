@@ -1,3 +1,9 @@
+constexpr u64 qpow(u64 x, u64 y, u32 mod) {
+	u64 ans = 1;
+	for (; y; y >>= 1, x *= x, x %= mod)
+		if (y & 1) ans *= x, ans %= mod;
+	return ans;
+}
 template <typename T>
 constexpr T qpow(T x, u64 y) {
 	T ans = 1;
@@ -17,15 +23,21 @@ struct Mint {
 		return val ? qpow(*this, norm(b, mod-1)) : 0;
 	}
 	constexpr Mint inv() { return pow(-1); }
-	friend constexpr Mint operator+ (Mint a, Mint b) { return a.val + b.val; }
-	friend constexpr Mint operator- (Mint a) { return mod-a.val; }
-	friend constexpr Mint operator- (Mint a, Mint b) { return a + (-b); }
-	friend constexpr Mint operator* (Mint a, Mint b) { return u64(a.val) * b.val; }
-	friend constexpr Mint operator/ (Mint a, Mint b) { return b.inv() * a; }
-	friend constexpr Mint& operator+= (Mint &a, Mint b) { return a = a + b; }
-	friend constexpr Mint& operator-= (Mint &a, Mint b) { return a = a - b; }
-	friend constexpr Mint& operator*= (Mint &a, Mint b) { return a = a * b; }
-	friend constexpr Mint& operator/= (Mint &a, Mint b) { return a = a / b; }
+	friend constexpr Mint operator- (Mint a) {
+		return a.val = a.val==0 ? 0 : mod-a.val, a;
+	}
+	constexpr Mint& operator+= (Mint b) {
+		return val+=b.val, (val>=mod)&&(val-=mod), *this;
+	}
+	constexpr Mint& operator*= (Mint b) {
+		return val = u64(val)*b.val%mod, *this;
+	}
+	constexpr Mint& operator-= (Mint b) { return *this += (-b); }
+	constexpr Mint& operator/= (Mint b) { return *this *= b.inv(); }
+	friend constexpr Mint operator+ (Mint a, Mint b) { return a += b; }
+	friend constexpr Mint operator- (Mint a, Mint b) { return a -= b; }
+	friend constexpr Mint operator* (Mint a, Mint b) { return a *= b; }
+	friend constexpr Mint operator/ (Mint a, Mint b) { return a /= b; }
 	friend constexpr Mint& operator++ (Mint &a) { return a += 1; }
 	friend constexpr Mint& operator-- (Mint &a) { return a -= 1; }
 	friend auto& operator<< (auto &s, Mint a) { return s << a.val; }
