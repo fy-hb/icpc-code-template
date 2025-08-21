@@ -69,6 +69,10 @@
       file: 区间修改懒标记线段树.cpp
     - name: ST表
       file: ST表.cpp
+    - name: 猫树
+      file: 猫树.cpp
+    - name: 后缀线性基
+      file: 后缀线性基.cpp
     - name: FHQ Treap
       file: FHQ Treap.cpp
     - name: 笛卡尔树
