@@ -1,3 +1,22 @@
 对于有负边的费用流问题，先按照上下界的方式让负边满流。
 
 注意费用来源于三个部分（负边满流、$s'$ 到 $t'$ 可行流的费用、$s$ 到 $t$ 的费用）
+
+\begin{minted}{cpp}
+for (auto [u, v, f, c] : e) {
+	if (c >= 0) add(u, v, f, c);
+	else {
+		add(v, u, f, -c);
+		tot[u] -= f, tot[v] += f;
+		ans[1] += f * c; // [1]
+	}
+}
+REP(i, 1, n) {
+	if (tot[i] > 0) add(ss, i, tot[i], 0);
+	else add(i, tt, -tot[i], 0);
+}
+auto [xx, yy] = EK(ss, tt);
+ans[1] += yy; // [2]
+auto [x, y] = EK(s, t);
+ans[0] = x, ans[1] += y; // [3]
+\end{minted}
