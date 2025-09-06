@@ -20,7 +20,7 @@ def gethash(s: str, lang: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--hash", type=bool)
+    parser.add_argument("--usehash", type=int)
 
     args = parser.parse_args()
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
                 print()
 
-                if args.hash:
+                if args.usehash:
                     for index, hash in enumerate(hashes, 1):
                         print("\\DefineCustomLabel{{{0}}}{{{1}}}".format(index, hash))
                     print()
