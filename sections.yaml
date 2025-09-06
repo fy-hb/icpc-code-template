@@ -20,8 +20,6 @@
 - name: 数学
   folder: 数学
   subs:
-    - name: Pythagorean triples tree
-      file: Pythagorean triples tree.cpp
     - name: 组合数
       file: 组合数.cpp
     - name: 组合数学相关
@@ -42,13 +40,21 @@
       file: 其他公式.tex
     - name: Nim积
       file: Nim积.cpp
+    - name: Pythagorean triples tree
+      file: Pythagorean triples tree.cpp
 - name: 字符串
   folder: 字符串
   subs:
     - name: AC自动机
-      file: AC自动机.cpp
+      file: ACAM.cpp
     - name: Lyndon分解
       file: Lyndon分解.cpp
+    - name: PAM
+      file: PAM.cpp
+    - name: SA-IS
+      file: SA-IS.cpp
+    - name: Manacher
+      file: Manacher.cpp
 - name: 计算几何
   folder: 计算几何
   subs:
@@ -67,6 +73,10 @@
       file: 单点修改线段树.cpp
     - name: 区间修改懒标记线段树
       file: 区间修改懒标记线段树.cpp
+    - name: 分块(O(1)加根号求和)
+      file: 分块_O1加根号求和.cpp
+    - name: 分块(根号加O(1)求和)
+      file: 分块_根号加O1求和.cpp
     - name: ST表
       file: ST表.cpp
     - name: 猫树
@@ -75,10 +85,14 @@
       file: 后缀线性基.cpp
     - name: FHQ Treap
       file: FHQ Treap.cpp
+    - name: 替罪羊树
+      file: 替罪羊树.cpp
     - name: 笛卡尔树
       file: 笛卡尔树.cpp
     - name: LCT
       file: LCT.cpp
+    - name: 三维偏序
+      file: 三维偏序.cpp
 - name: 图论
   folder: 图论
   subs:

@@ -3,6 +3,9 @@ import hashlib
 import re
 
 
+USE_HASH = 0
+
+
 def escape(s: str):
     return s.replace(r"_", r"\_")
 
@@ -50,9 +53,11 @@ if __name__ == "__main__":
                         hashes.append(gethash(line, lang))
 
                 print()
-                for index, hash in enumerate(hashes, 1):
-                    print("\\DefineCustomLabel{{{0}}}{{{1}}}".format(index, hash))
-                print()
+
+                if USE_HASH:
+                    for index, hash in enumerate(hashes, 1):
+                        print("\\DefineCustomLabel{{{0}}}{{{1}}}".format(index, hash))
+                    print()
 
                 if lang != "tex":
                     print("\\begin{{minted}}{{{0}}}".format(lang))
