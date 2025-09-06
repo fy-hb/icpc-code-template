@@ -1,9 +1,7 @@
-import yaml
+import tomlkit
+import argparse
 import hashlib
 import re
-
-
-USE_HASH = 0
 
 
 def escape(s: str):
@@ -20,8 +18,14 @@ def gethash(s: str, lang: str):
 
 
 if __name__ == "__main__":
-    with open("sections.yaml", "r", encoding="UTF-8") as file:
-        contents = yaml.safe_load(file)
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--hash", type=bool)
+
+    args = parser.parse_args()
+
+    with open("sections.toml", "r", encoding="UTF-8") as file:
+        contents = tomlkit.parse(file.read())['sections']
 
     with open("template/header.tex", "r", encoding="UTF-8") as file:
         print(file.read(), end="")
@@ -54,7 +58,7 @@ if __name__ == "__main__":
 
                 print()
 
-                if USE_HASH:
+                if args.hash:
                     for index, hash in enumerate(hashes, 1):
                         print("\\DefineCustomLabel{{{0}}}{{{1}}}".format(index, hash))
                     print()

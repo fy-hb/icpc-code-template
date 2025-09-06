@@ -1,0 +1,287 @@
+[[sections]]
+name = "数论"
+folder = "数论"
+
+  [[sections.subs]]
+  name = "ExGcd"
+  file = "ExGcd.cpp"
+
+  [[sections.subs]]
+  name = "ExCRT"
+  file = "ExCRT.cpp"
+
+  [[sections.subs]]
+  name = "EulerPhi"
+  file = "EulerPhi.cpp"
+
+  [[sections.subs]]
+  name = "预处理逆元"
+  file = "预处理逆元.cpp"
+
+  [[sections.subs]]
+  name = "常见数论函数"
+  file = "常见数论函数.tex"
+
+  [[sections.subs]]
+  name = "Miller–Rabin+Pollard-rho"
+  file = "Miller–Rabin+Pollard-rho.cpp"
+
+  [[sections.subs]]
+  name = "Mod Int"
+  file = "Mod Int.cpp"
+
+  [[sections.subs]]
+  name = "二次剩余"
+  file = "二次剩余.cpp"
+
+[[sections]]
+name = "数学"
+folder = "数学"
+
+  [[sections.subs]]
+  name = "组合数"
+  file = "组合数.cpp"
+
+  [[sections.subs]]
+  name = "组合数学相关"
+  file = "组合数学相关.tex"
+
+  [[sections.subs]]
+  name = "FFT"
+  file = "FFT.cpp"
+
+  [[sections.subs]]
+  name = "FMT/或卷积"
+  file = "FMT.cpp"
+
+  [[sections.subs]]
+  name = "子集卷积"
+  file = "子集卷积.cpp"
+
+  [[sections.subs]]
+  name = "FWT"
+  file = "FWT.cpp"
+
+  [[sections.subs]]
+  name = "Poly"
+  file = "Poly.cpp"
+
+  [[sections.subs]]
+  name = "STL积分/求和"
+  file = "STL积分求和.tex"
+
+  [[sections.subs]]
+  name = "其他公式"
+  file = "其他公式.tex"
+
+  [[sections.subs]]
+  name = "Nim积"
+  file = "Nim积.cpp"
+
+  [[sections.subs]]
+  name = "Pythagorean triples tree"
+  file = "Pythagorean triples tree.cpp"
+
+[[sections]]
+name = "字符串"
+folder = "字符串"
+
+  [[sections.subs]]
+  name = "AC自动机"
+  file = "ACAM.cpp"
+
+  [[sections.subs]]
+  name = "Lyndon分解"
+  file = "Lyndon分解.cpp"
+
+  [[sections.subs]]
+  name = "PAM"
+  file = "PAM.cpp"
+
+  [[sections.subs]]
+  name = "SA-IS"
+  file = "SA-IS.cpp"
+
+  [[sections.subs]]
+  name = "Manacher"
+  file = "Manacher.cpp"
+
+[[sections]]
+name = "计算几何"
+folder = "计算几何"
+
+  [[sections.subs]]
+  name = "凸包"
+  file = "凸包.cpp"
+
+[[sections]]
+name = "数据结构"
+folder = "数据结构"
+
+  [[sections.subs]]
+  name = "区间加和树状数组"
+  file = "区间加和树状数组.cpp"
+
+  [[sections.subs]]
+  name = "二维树状数组"
+  file = "二维树状数组.tex"
+
+  [[sections.subs]]
+  name = "树状数组二分"
+  file = "树状数组二分.cpp"
+
+  [[sections.subs]]
+  name = "单点修改线段树"
+  file = "单点修改线段树.cpp"
+
+  [[sections.subs]]
+  name = "区间修改懒标记线段树"
+  file = "区间修改懒标记线段树.cpp"
+
+  [[sections.subs]]
+  name = "分块(O(1)加根号求和)"
+  file = "分块_O1加根号求和.cpp"
+
+  [[sections.subs]]
+  name = "分块(根号加O(1)求和)"
+  file = "分块_根号加O1求和.cpp"
+
+  [[sections.subs]]
+  name = "ST表"
+  file = "ST表.cpp"
+
+  [[sections.subs]]
+  name = "猫树"
+  file = "猫树.cpp"
+
+  [[sections.subs]]
+  name = "后缀线性基"
+  file = "后缀线性基.cpp"
+
+  [[sections.subs]]
+  name = "FHQ Treap"
+  file = "FHQ Treap.cpp"
+
+  [[sections.subs]]
+  name = "替罪羊树"
+  file = "替罪羊树.cpp"
+
+  [[sections.subs]]
+  name = "笛卡尔树"
+  file = "笛卡尔树.cpp"
+
+  [[sections.subs]]
+  name = "LCT"
+  file = "LCT.cpp"
+
+  [[sections.subs]]
+  name = "三维偏序"
+  file = "三维偏序.cpp"
+
+[[sections]]
+name = "图论"
+folder = "图论"
+
+  [[sections.subs]]
+  name = "差分约束"
+  file = "差分约束.tex"
+
+  [[sections.subs]]
+  name = "无向图欧拉回路"
+  file = "无向图欧拉回路.cpp"
+
+  [[sections.subs]]
+  name = "floyd"
+  file = "floyd.cpp"
+
+  [[sections.subs]]
+  name = "dinic"
+  file = ["dinic.cpp", "上下界最大流.tex"]
+
+  [[sections.subs]]
+  name = "费用流(EK)"
+  file = ["费用流(EK).cpp", "有负边的费用流问题.tex"]
+
+  [[sections.subs]]
+  name = "tarjan(SCC)"
+  file = "tarjan(SCC).cpp"
+
+  [[sections.subs]]
+  name = "tarjan(边双)"
+  file = "tarjan(边双).cpp"
+
+  [[sections.subs]]
+  name = "tarjan(点双)"
+  file = "tarjan(点双).cpp"
+
+  [[sections.subs]]
+  name = "边三联通分量"
+  file = "边三联通分量.cpp"
+
+[[sections]]
+name = "Misc"
+folder = "Misc"
+
+  [[sections.subs]]
+  name = "cout.precision"
+  file = "cout.precision.cpp"
+
+  [[sections.subs]]
+  name = "上下取整"
+  file = "上下取整.cpp"
+
+  [[sections.subs]]
+  name = "mmap"
+  file = "mmap.cpp"
+
+  [[sections.subs]]
+  name = "read()"
+  file = "read().cpp"
+
+  [[sections.subs]]
+  name = "随机"
+  file = "随机.cpp"
+
+  [[sections.subs]]
+  name = "__builtin_xxx"
+  file = "__builtin_xxx.tex"
+
+  [[sections.subs]]
+  name = "Gosper's hack"
+  file = "Gosper's hack.cpp"
+
+  [[sections.subs]]
+  name = "<ext/pbds/>"
+  file = "pbds.tex"
+
+  [[sections.subs]]
+  name = "日期时间"
+  file = "日期时间.cpp"
+
+  [[sections.subs]]
+  name = "火车头"
+  file = "火车头.cpp"
+
+  [[sections.subs]]
+  name = "bashrc"
+  file = "bashrc.sh"
+
+  [[sections.subs]]
+  name = "编译参数"
+  file = "编译参数.tex"
+
+  [[sections.subs]]
+  name = "Xor Shift"
+  file = "Xor Shift.cpp"
+
+  [[sections.subs]]
+  name = "python Decimal"
+  file = "python Decimal.py"
+
+  [[sections.subs]]
+  name = "python Fractions"
+  file = "python Fractions.py"
+
+  [[sections.subs]]
+  name = "浮点数cmp(对拍用)"
+  file = "浮点数cmp(对拍用).py"
