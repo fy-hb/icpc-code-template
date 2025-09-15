@@ -24,6 +24,12 @@ g_n = \sum_{i = 0}^{n} \dbinom{n}{i} f_i
 \iff
 f_n = \sum_{i = 0}^{n} \dbinom{n}{i} (-1)^{n-1} g_i
 $$
+
+$$
+f(S) = \sum_{S \subseteq T} g(T)
+\iff
+g(S) = \sum_{S \subseteq T} (-1)^{|T| - |S|} f(T)
+$$
 \item 范德蒙德卷积
 $$
 \sum_{i=0}^{k} \dbinom{n}{i} \dbinom{m}{k-i} = \dbinom{n+m}{k}
