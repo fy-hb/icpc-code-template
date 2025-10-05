@@ -9,8 +9,7 @@ constexpr T qpow(T x, u64 y, u32 mod) {
 template <u32 mod, u32 root>
 struct Poly : vector<Mint<mod>> {
 	using Z = Mint<mod>;
-	constexpr Poly (auto ...x) : vector<Z>(x...) {}
-	constexpr Poly (initializer_list<Z> x) : vector<Z>(x) {}
+	using vector<Z>::vector;
 	static int lim, invlim;
 	static vector<Z> wn;
 	static vector<int> rev;
@@ -139,10 +138,16 @@ struct Poly : vector<Mint<mod>> {
 	}
 };
 #undef S
-
 template <u32 mod, u32 g> int Poly<mod, g>::lim;
 template <u32 mod, u32 g> int Poly<mod, g>::invlim;
 template <u32 mod, u32 g> vector<Mint<mod>> Poly<mod, g>::wn;
 template <u32 mod, u32 g> vector<int> Poly<mod, g>::rev;
-
 using P = Poly<998244353, 3>;
+/*
+ 104857601  3 | 2^22 5^2
+ 880803841 26 | 2^23 3 5 7
+ 950009857  7 | 2^21 3 151
+ 998244353  3 | 2^23 7 17
+1004535809  3 | 2^21 479
+1107296257 10 | 2^25 3 11
+*/

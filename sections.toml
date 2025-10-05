@@ -183,6 +183,14 @@ name = "图论"
 folder = "图论"
 
   [[sections.subs]]
+  name = "LCA(dfs序)"
+  file = "LCA(dfs序).cpp"
+
+  [[sections.subs]]
+  name = "LCA(斜二进制)"
+  file = "LCA(斜二进制).cpp"
+
+  [[sections.subs]]
   name = "差分约束"
   file = "差分约束.tex"
 
