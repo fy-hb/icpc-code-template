@@ -23,10 +23,12 @@ struct Mint {
 	constexpr Mint& operator+= (Mint b) {
 		return val+=b.val, (val>=mod)&&(val-=mod), *this;
 	}
+	constexpr Mint& operator-= (Mint b) {
+		return val += mod-b.val, (val>=mod)&&(val-=mod), *this;
+	}
 	constexpr Mint& operator*= (Mint b) {
 		return val = u64(val)*b.val%mod, *this;
 	}
-	constexpr Mint& operator-= (Mint b) { return *this += (-b); }
 	constexpr Mint& operator/= (Mint b) { return *this *= b.inv(); }
 	friend constexpr Mint operator+ (Mint a, Mint b) { return a += b; }
 	friend constexpr Mint operator- (Mint a, Mint b) { return a -= b; }
