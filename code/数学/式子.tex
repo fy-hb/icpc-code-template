@@ -92,4 +92,43 @@ $k$ 个球                & $m$ 个盒子               & 允许有空 & 方案�
                       &                       & 否    & $ [x^{k-m}] \prod_{i=1}^{m} \frac{1}{1 - x ^ i} \begin{matrix} {\color{white}1} \\ {\color{white}1} \end{matrix}$       \\ \hline
 \end{tabular}
 \end{center}
+
+\item 单位根反演
+
+$$
+[n \mid k] = \frac{1}{n} \sum_{i = 0}^{n-1} \omega_{n}^{i k}
+$$
+
+$$
+\begin{array}{lr}
+f(x) = \sum_{k=0}^{m} f_k x^{k}
+& \sum_{k=0}^{m} [n \mid k] f_k = \frac{1}{n} \sum_{i=0}^{n-1} f(\omega_{n}^{i})
+\end{array}
+$$
+
+$$
+d(i \cdot j) = \sum_{p \mid i, p \mid j} \mu (p) \cdot d (\frac{i}{p}) \cdot d (\frac{j}{p})
+\qquad
+\epsilon (x) = \sum \limits_{d \mid x} \mu (d)
+$$
+
+$$
+\mathrm{I} * \mathrm{I} = \mathrm{d}
+\quad
+\mathrm{\varphi} * \mathrm{I} = \mathrm{Id}
+\quad
+\Lambda * \mathrm{I} = \log
+\quad
+\mathrm{Id}_k * \mathrm{I} = \mathrm{\sigma}_k
+\quad
+\mathrm{\mu} * \mathrm{I} = \mathrm{\epsilon}
+$$
+
+$$
+f * g = h \implies g(1) * S(n) = \sum_{i = 1}^{n} h(i) - \sum_{i = 2}^{n} g(i) S(\left \lfloor \frac{n}{i} \right \rfloor)
+$$
+
+$$
+f = g * h \implies h(p ^ c) = f(p ^ c) - \sum_{i = 1}^{c} g(p ^ i) \cdot h(p ^ {c-i})
+$$
 \end{itemize}

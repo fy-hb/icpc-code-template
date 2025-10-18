@@ -43,8 +43,8 @@ folder = "数学"
   file = "组合数.cpp"
 
   [[sections.subs]]
-  name = "组合数学相关"
-  file = "组合数学相关.tex"
+  name = "式子"
+  file = "式子.tex"
 
   [[sections.subs]]
   name = "FFT"
@@ -69,10 +69,6 @@ folder = "数学"
   [[sections.subs]]
   name = "STL积分/求和"
   file = "STL积分求和.tex"
-
-  [[sections.subs]]
-  name = "其他公式"
-  file = "其他公式.tex"
 
   [[sections.subs]]
   name = "Nim积"
@@ -225,6 +221,10 @@ folder = "图论"
   [[sections.subs]]
   name = "边三联通分量"
   file = "边三联通分量.cpp"
+
+  [[sections.subs]]
+  name = "最大独立集"
+  file = "最大独立集.cpp"
 
 [[sections]]
 name = "Misc"
