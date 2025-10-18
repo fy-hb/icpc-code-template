@@ -10,28 +10,30 @@ template <u32 mod, u32 root>
 struct Poly : vector<Mint<mod>> {
 	using Z = Mint<mod>;
 	using vector<Z>::vector;
-	static int lim, invlim;
-	static vector<Z> wn;
-	static vector<int> rev;
+	static u32 lim, invlim, siz, rev[1<<20], wn[1<<20];
+	static u64 tmp[1<<20];
 	static constexpr void init(int n) {
 		lim = n > 1 ? (2 << __lg(n - 1)) : 1;
 		invlim = mod - (mod - 1) / lim;
-		wn.resize(lim), rev.resize(lim);
-		for (int i = 1; i < lim; i <<= 1) {
-			Z w = Z(root).pow(mod / i / 2), cur = 1;
-			REP(j, 0, i-1) wn[i+j] = cur, cur *= w;
-		}
 		REP(i, 1, lim-1) rev[i] = rev[i>>1] >> 1 | (i&1 ? lim>>1 : 0);
+		for (siz = max(siz, 1u); siz < lim; siz <<= 1) {
+			Z w = Z(root).pow(mod / siz / 2), cur = 1;
+			REP(j, 0, siz-1) wn[siz+j] = cur.val, cur *= w;
+		}
 	}
 	constexpr void dft() {
 		S.resize(lim);
-		REP(i, 0, lim-1) if (i < rev[i]) ::swap(S[i], S[rev[i]]);
-		for (int i = 1; i < lim; i <<= 1)
+		REP(i, 0, lim-1) tmp[i] = S[rev[i]].val;
+		for (int i = 1; i < lim; i <<= 1) {
+			for (int k = i & (1<<19); k--; )
+				if (tmp[k] >= mod * 9ull) tmp[k] -= mod * 9ull;
 			for (int j = 0; j < lim; j += 2 * i)
 				for (int k = 0; k < i; k ++) {
-					auto x = S[i+j+k] * wn[i+k];
-					S[i+j+k] = S[k+j] - x; S[k+j] += x;
+					u64 x = tmp[i+j+k] * wn[i+k] % mod;
+					tmp[i+j+k] = tmp[k+j] + mod - x; tmp[k+j] += x;
 				}
+		}
+		REP(i, 0, lim-1) S[i] = tmp[i];
 	}
 	constexpr void idft() {
 		dft(), ::reverse(S.begin()+1, S.end());
@@ -40,6 +42,13 @@ struct Poly : vector<Mint<mod>> {
 	constexpr friend Poly operator* (Poly a, Poly b) {
 		assert(a.size() && b.size());
 		int l = a.size() + b.size() - 1;
+		if (min(ssize(a), ssize(b)) <= 128) {
+			Poly c(l);
+			REP(i, 0, ssize(a)-1)
+				REP(j, 0, ssize(b)-1)
+					c[i + j] += a[i] * b[j];
+			return c;
+		}
 		init(l), a.dft(), b.dft();
 		REP(i, 0, lim-1) a[i] *= b[i];
 		return a.idft(), a.trunc(l);
@@ -138,10 +147,12 @@ struct Poly : vector<Mint<mod>> {
 	}
 };
 #undef S
-template <u32 mod, u32 g> int Poly<mod, g>::lim;
-template <u32 mod, u32 g> int Poly<mod, g>::invlim;
-template <u32 mod, u32 g> vector<Mint<mod>> Poly<mod, g>::wn;
-template <u32 mod, u32 g> vector<int> Poly<mod, g>::rev;
+template <u32 mod, u32 g> u32 Poly<mod, g>::lim;
+template <u32 mod, u32 g> u32 Poly<mod, g>::siz;
+template <u32 mod, u32 g> u32 Poly<mod, g>::invlim;
+template <u32 mod, u32 g> u32 Poly<mod, g>::wn[];
+template <u32 mod, u32 g> u32 Poly<mod, g>::rev[];
+template <u32 mod, u32 g> u64 Poly<mod, g>::tmp[];
 using P = Poly<998244353, 3>;
 /*
  104857601  3 | 2^22 5^2
@@ -150,4 +161,5 @@ using P = Poly<998244353, 3>;
  998244353  3 | 2^23 7 17
 1004535809  3 | 2^21 479
 1107296257 10 | 2^25 3 11
+1261007895663738881 6 | 2^55 5 7
 */
