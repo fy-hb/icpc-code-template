@@ -293,3 +293,7 @@ folder = "Misc"
   [[sections.subs]]
   name = "浮点数cmp(对拍用)"
   file = "浮点数cmp(对拍用).py"
+
+  [[sections.subs]]
+  name = "常数表"
+  file = "常数表.tex"
