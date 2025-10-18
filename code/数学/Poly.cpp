@@ -42,7 +42,7 @@ struct Poly : vector<Mint<mod>> {
 	constexpr friend Poly operator* (Poly a, Poly b) {
 		assert(a.size() && b.size());
 		int l = a.size() + b.size() - 1;
-		if (min(ssize(a), ssize(b)) <= 128) {
+		if (min(ssize(a), ssize(b)) <= 32) {
 			Poly c(l);
 			REP(i, 0, ssize(a)-1)
 				REP(j, 0, ssize(b)-1)
@@ -100,13 +100,36 @@ struct Poly : vector<Mint<mod>> {
 		REP(i, 0, ssize(S)-1) res[i+1] = S[i] / (i+1);
 		return res;
 	}
+	constexpr void invext(Poly &f) const {
+		int d = ssize(f);
+		auto t1 = trunc(2 * d);
+		auto t2 = f.trunc(2 * d);
+		init(2 * d);
+		t1.dft(); t2.dft();
+		REP(i, 0, lim-1) t1[i] *= t2[i];
+		t1.idft();
+		REP(i, 0, d-1) t1[i] = 0;
+		t1.dft();
+		REP(i, 0, lim-1) t1[i] *= t2[i];
+		t1.idft();
+		REP(i, 0, d-1) t1[i] = 0;
+		f.resize(2 * d);
+		REP(i, 0, lim-1) f[i] -= t1[i];
+	}
 	constexpr Poly inv(int n) const { // inv(a) (mod x^n)
 		Poly x = {1 / S[0]};
-		for (int t = 2; t < 2*n; t <<= 1) {
-			x = (x * (Poly {2} - S.trunc(t) * x)).trunc(t);
+		for (int t = 1; t < n; t <<= 1) {
+			invext(x);
 		}
 		return x.trunc(n);
 	}
+	// constexpr Poly inv(int n) const { // inv(a) (mod x^n)
+	// 	Poly x = {1 / S[0]};
+	// 	for (int t = 2; t < 2*n; t <<= 1) {
+	// 		x = (x * (Poly {2} - S.trunc(t) * x)).trunc(t);
+	// 	}
+	// 	return x.trunc(n);
+	// }
 	static constexpr pair<Poly, Poly> div(const Poly &a, const Poly &b) {
 		int n = ssize(a), m = ssize(b);
 		auto q = (b.reverse().inv(n-m+1) * a.reverse()).trunc(n-m+1);
