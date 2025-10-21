@@ -77,6 +77,14 @@ H_n
 = \frac{(4 n - 2) H_{n-1}}{n + 1}
 = \dbinom{2 n}{n} - \dbinom{2 n}{n - 1}
 $$
+\item 伯努利数
+$$
+\begin{array}{lll}
+\sum_{j=0}^{m} \binom{m+1}{j} B_j = 0
+& (m > 0)
+& B_0 = 1
+\end{array}
+$$
 \item 小球装盒问题
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -104,6 +112,13 @@ $$
 f(x) = \sum_{k=0}^{m} f_k x^{k}
 & \sum_{k=0}^{m} [n \mid k] f_k = \frac{1}{n} \sum_{i=0}^{n-1} f(\omega_{n}^{i})
 \end{array}
+$$
+
+\item 其他公式
+
+$$
+1^k + 2^k + \dots + x^k
+= \frac{1}{k+1} \sum_{j=0}^{k} \binom{k+1}{j} B_j \, x^{k+1-j}
 $$
 
 $$

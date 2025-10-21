@@ -5,29 +5,35 @@ constexpr T qpow(T x, u64 y) {
 		if (y & 1) ans *= x;
 	return ans;
 }
-template <u32 mod>
+template <u32 P>
 struct Mint {
 	u32 val;
+	static constexpr u32 norm(u32 x, u32 p) {
+		return x >= p ? x - p : x;
+	}
+	static constexpr u32 mod(auto x, u32 p) {
+		return x < 0 ? norm(p - u64(-x) % p, p) : x % p;
+	}
+	static constexpr u32 mulmod(u32 x, u32 y, u32 p) {
+		return u64(x) * y % p;
+	}
 	constexpr Mint () = default;
-	constexpr Mint (auto x) : val(norm(x, mod)) { }
-	static constexpr u32 norm(auto x, u32 m) {
-		return x%=int(m), (x<0)&&(x+=m), x;
+	constexpr Mint (auto x) : val(mod(x, P)) { }
+	constexpr Mint pow(auto b) const {
+		return val ? qpow(*this, mod(b, P-1)) : 0;
 	}
-	constexpr Mint pow(auto b) {
-		return val ? qpow(*this, norm(b, mod-1)) : 0;
-	}
-	constexpr Mint inv() { return pow(-1); }
+	constexpr Mint inv() const { return pow(-1); }
 	friend constexpr Mint operator- (Mint a) {
-		return a.val && (a.val=mod-a.val), a;
+		return a.val = norm(P - a.val, P), a;
 	}
 	constexpr Mint& operator+= (Mint b) {
-		return val+=b.val, (val>=mod)&&(val-=mod), *this;
+		return val = norm(val + b.val, P), *this;
 	}
 	constexpr Mint& operator-= (Mint b) {
-		return val += mod-b.val, (val>=mod)&&(val-=mod), *this;
+		return val = norm(val + P - b.val, P), *this;
 	}
 	constexpr Mint& operator*= (Mint b) {
-		return val = u64(val)*b.val%mod, *this;
+		return val = mulmod(val, b.val, P), *this;
 	}
 	constexpr Mint& operator/= (Mint b) { return *this *= b.inv(); }
 	friend constexpr Mint operator+ (Mint a, Mint b) { return a += b; }
@@ -38,4 +44,4 @@ struct Mint {
 	friend constexpr Mint& operator-- (Mint &a) { return a -= 1; }
 	friend auto& operator<< (auto &s, Mint a) { return s << a.val; }
 };
-using Z = Mint<998'244'353>;
+using Z = Mint<1'000'000'007>;
