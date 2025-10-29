@@ -1,10 +1,9 @@
 int dep[N], lb[N], fa[N];
-void dfs(int u, int ff) {
-	dep[u] = dep[ff] + 1, fa[u] = ff;
-	if (ff) adj[u].erase(find(adj[u].begin(), adj[u].end(), ff));
-	int x = lb[ff], y = lb[x];
-	lb[u] = 2*dep[x]==dep[ff]+dep[y] ? y : ff;
-	for (auto i : adj[u]) dfs(i, u);
+void dfs(int u, int P) {
+	dep[u] = dep[P] + 1, fa[u] = P;
+	int X = lb[P], Y = lb[X];
+	lb[u] = 2*dep[X]==dep[P]+dep[Y] ? Y : P;
+	for (auto i : adj[u]) if (i != P) dfs(i, u);
 }
 int lca(int u, int v) {
 	if (dep[u] < dep[v]) swap(u, v);
