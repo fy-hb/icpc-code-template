@@ -1,21 +1,19 @@
-const int N = 524288;
-int f[19][N];
-void init(int siz) {
-	int x = __lg(siz) + 1, n = 1 << x;
-	REP(j, 1, x-1) {
-		int len = 1 << j;
-		REP(i, 0, n-1) {
-			if (len-1&i) f[j][i] = min(f[j][i-1], f[0][i]);
-			else i += len, f[j][i] = f[0][i];
+const int N = 500'000;
+Info val[N], info[19][N];
+void build(int n) {
+	for (int h = 0, s = 1; s <= n; ++h, s <<= 1)
+		for (int i = s; i <= n; i += s << 1) {
+			info[h][i - 1] = val[i - 1];
+			REV(j, i-1, i-s+1)
+				info[h][j - 1] = val[j - 1] + info[h][j];
+			if (i == n) break;
+			info[h][i] = val[i];
+			REP(j, i+1, min(i+s-1, n-1))
+				info[h][j] = info[h][j - 1] + val[j];
 		}
-		REV(i, n-1, 0) {
-			if (len-1&i+1) f[j][i] = min(f[0][i], f[j][i+1]);
-			else i -= len, f[j][i] = f[0][i];
-		}
-	}
 }
-int query(int l, int r) {
-	if (l == r) return f[0][l];
-	int x = __lg(l ^ r);
-	return min(f[x][l], f[x][r]);
+Info query(int l, int r) {
+	if (l == r) return val[l];
+	int h = __lg(l ^ r);
+	return info[h][l] + info[h][r];
 }
