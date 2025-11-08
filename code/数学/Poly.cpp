@@ -40,6 +40,7 @@ struct Poly : vector<Mint<mod>> {
 		for (auto &i : S) i *= invlim;
 	}
 	constexpr friend Poly operator* (Poly a, Poly b) {
+		if (!a.size() || !b.size()) return {};
 		assert(a.size() && b.size());
 		int l = a.size() + b.size() - 1;
 		if (min(ssize(a), ssize(b)) <= 32) {
