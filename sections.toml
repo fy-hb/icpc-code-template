@@ -75,6 +75,10 @@ folder = "数学"
   file = "Poly.cpp"
 
   [[sections.subs]]
+  name = "多项式插值"
+  file = "多项式插值.cpp"
+
+  [[sections.subs]]
   name = "STL积分/求和"
   file = "STL积分求和.tex"
 
@@ -85,6 +89,10 @@ folder = "数学"
   [[sections.subs]]
   name = "Pythagorean triples tree"
   file = "Pythagorean triples tree.cpp"
+
+  [[sections.subs]]
+  name = "Bernoulli Number"
+  file = "Bernoulli Number.cpp"
 
 [[sections]]
 name = "字符串"
@@ -237,6 +245,10 @@ folder = "图论"
   [[sections.subs]]
   name = "最大独立集"
   file = "最大独立集.cpp"
+
+  [[sections.subs]]
+  name = "Static Top Tree"
+  file = "Static Top Tree.cpp"
 
 [[sections]]
 name = "Misc"
