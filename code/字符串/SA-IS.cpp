@@ -41,16 +41,3 @@ vector<int> sais(const auto& a) { // a[i] >= 1
 	insort(b);
 	return sa;
 }
-vector<int> getHeight(const vector<int> &sa, const auto &a) {
-	int n = ssize(sa), k = 0;
-	vector<int> rk(n), h(n);
-	REP(i, 0, n-1) rk[sa[i]] = i;
-	REP(i, 0, n-1) {
-		if (!rk[i]) continue;
-		if (k) k --;
-		int j = sa[rk[i]-1];
-		while (i + k < n && j + k < n && a[i+k] == a[j+k]) k ++;
-		h[rk[i]] = k;
-	}
-	return h;
-}

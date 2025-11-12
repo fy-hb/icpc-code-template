@@ -111,6 +111,10 @@ folder = "字符串"
   file = "PAM.cpp"
 
   [[sections.subs]]
+  name = "SA"
+  file = "SA.cpp"
+
+  [[sections.subs]]
   name = "SA-IS"
   file = "SA-IS.cpp"
 
