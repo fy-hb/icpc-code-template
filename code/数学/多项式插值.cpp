@@ -23,8 +23,6 @@ P solve(vector<Z> key, vector<Z> val) {
 		fp[L+i][0] = ax[i] * ax[i+1] * val[i];
 		ax[i] = ax[i+1] * q;
 	}
-	for(int i=L-1; i>=1; i--){
-		fp[i] = fp[i*2] * st[i*2+1].reverse() + fp[i*2+1] * st[i*2].reverse();
-	}
+	REV(i, L-1, 1) fp[i] = fp[i*2] * st[i*2+1].reverse() + fp[i*2+1] * st[i*2].reverse();
 	return fp[1];
 }
