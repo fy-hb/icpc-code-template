@@ -131,10 +131,13 @@ struct Poly : vector<Mint<mod>> {
 	// 	}
 	// 	return x.trunc(n);
 	// }
-	static constexpr pair<Poly, Poly> div(const Poly &a, const Poly &b) {
-		int n = ssize(a), m = ssize(b);
-		auto q = (b.reverse().inv(n-m+1) * a.reverse()).trunc(n-m+1);
-		return {q, (a - b * q).trunc(m - 1)};
+	static constexpr pair<Poly, Poly> div(Poly f, Poly g) {
+		// while (a.size() && a.back().val == 0) a.pop_back();
+		int n = ssize(f), m = ssize(g);
+		if (m == 0) return {};
+		if (n < m) return {{}, f};
+		auto q = (g.reverse().inv(n-m+1) * f.reverse()).trunc(n-m+1).reverse();
+		return {q, (f - g * q).trunc(m - 1)};
 	}
 	constexpr Poly log(int n) const {
 		return (S.deriv() * S.inv(n)).integr().trunc(n);
