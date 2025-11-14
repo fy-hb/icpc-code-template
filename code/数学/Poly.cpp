@@ -132,11 +132,12 @@ struct Poly : vector<Mint<mod>> {
 	// 	return x.trunc(n);
 	// }
 	static constexpr pair<Poly, Poly> div(Poly f, Poly g) {
-		// while (a.size() && a.back().val == 0) a.pop_back();
+		while (g.size() && g.back().val == 0) g.pop_back();
 		int n = ssize(f), m = ssize(g);
 		if (m == 0) return {};
 		if (n < m) return {{}, f};
 		auto q = (g.reverse().inv(n-m+1) * f.reverse()).trunc(n-m+1).reverse();
+		if (n == m) return {q, {}};
 		return {q, (f - g * q).trunc(m - 1)};
 	}
 	constexpr Poly log(int n) const {
